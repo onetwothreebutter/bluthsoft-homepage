@@ -2,7 +2,7 @@
 
 The marketing homepage for BluthSoft, the operating platform for banana stands — a take-home homepage build from a supplied Figma design.
 
-**Live:** TODO — `https://bluthsoft.vercel.app` once the Vercel project is connected.
+**Live:** TODO — `https://bluthsoft-homepage.vercel.app` once the Vercel project is connected.
 
 Decisions, changes from the design, and AI suggestions I turned down are logged in [`DECISIONS.md`](DECISIONS.md).
 

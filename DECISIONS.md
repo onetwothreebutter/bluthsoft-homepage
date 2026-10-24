@@ -13,7 +13,7 @@ A running log of what was decided, why, and what was changed from the supplied d
 ### Stack and hosting
 
 - **Astro + Tailwind v4.** The page is mostly content; Astro ships no JavaScript unless a piece needs it, which keeps it fast. Pages are prerendered; only the lead endpoint runs on demand.
-- **Vercel, deployed from GitHub,** so every PR gets a preview URL. Production is `bluthsoft.vercel.app`.
+- **Vercel, deployed from GitHub,** so every PR gets a preview URL. Production is `bluthsoft-homepage.vercel.app`.
 - **All copy in one typed file** (`src/content/home.ts`). A CMS is the obvious next step, and its schema would mirror this file's types; it wasn't worth the setup time here.
 - **Fonts are self-hosted** (Bricolage Grotesque, Schibsted Grotesk, IBM Plex Mono, all OFL) rather than loaded from Google, so loading the page sends nothing about the visitor to a third party.
 

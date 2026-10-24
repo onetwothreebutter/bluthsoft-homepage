@@ -20,7 +20,7 @@ test("homepage carries the tags search engines read", async ({ page }) => {
   // Canonical is absolute and points at production, whatever host served the page.
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://bluthsoft.vercel.app/",
+    "https://bluthsoft-homepage.vercel.app/",
   );
   await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 
@@ -39,6 +39,6 @@ test("robots.txt points at the sitemap", async ({ request }) => {
   const response = await request.get("/robots.txt");
   expect(response.status()).toBe(200);
   expect(await response.text()).toContain(
-    "Sitemap: https://bluthsoft.vercel.app/sitemap-index.xml",
+    "Sitemap: https://bluthsoft-homepage.vercel.app/sitemap-index.xml",
   );
 });

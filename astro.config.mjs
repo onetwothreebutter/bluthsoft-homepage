@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // Canonical origin. Previews deliberately keep pointing here, so search
 // engines only ever see the production URL.
-const site = process.env.PUBLIC_SITE_URL ?? "https://bluthsoft.vercel.app";
+const site = process.env.PUBLIC_SITE_URL ?? "https://bluthsoft-homepage.vercel.app";
 
 export default defineConfig({
   site,
