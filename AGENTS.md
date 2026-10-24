@@ -3,7 +3,7 @@
 BluthSoft's marketing homepage: Astro (static, plus one on-demand route), Tailwind v4, deployed on Vercel.
 
 - **pnpm only.** Node 22+.
-- **Copy lives in `src/content/home.ts`.** Components render from it and never hard-code copy. The design's copy is verbatim; don't "fix" it — known contradictions are logged in `DECISIONS.md`.
+- **Copy lives in `src/content/`:** `home.ts` for the homepage, `site.ts` for site-wide strings (brand name, structured-data wording, the skip link). Components and layouts render from these and never hard-code copy. The design's copy is verbatim; don't "fix" it — known contradictions are logged in `DECISIONS.md`.
 - **Any new copy (not in the Figma design) gets listed in the PR description** under "New copy", so it can be reviewed separately from the design's.
 - **Design tokens live in `src/styles/global.css` (`@theme`).** Use them (`bg-forest`, `text-ink/72`, `rounded-tile`, `shadow-press`) instead of arbitrary values.
 - **Analytics goes through `src/lib/analytics.ts` only.** Never import `posthog-js` elsewhere, and don't call `track()` from components: mark clickable elements with `data-track` / `data-location` / `data-label` / `data-destination` and sections with `data-section`; one page-level listener does the rest.

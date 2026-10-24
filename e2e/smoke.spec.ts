@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { home } from "../src/content/home";
+import { siteUrl } from "../site-url.mjs";
 
 test("homepage loads with its heading", async ({ page }) => {
   const response = await page.goto("/");
@@ -17,10 +18,11 @@ test("homepage carries the tags search engines read", async ({ page }) => {
     "content",
     home.meta.description,
   );
-  // Canonical is absolute and points at production, whatever host served the page.
+  // Canonical is absolute and points at the configured origin, whatever host
+  // served the page.
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://bluthsoft-homepage.vercel.app/",
+    new URL("/", siteUrl).href,
   );
   await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 
@@ -39,6 +41,6 @@ test("robots.txt points at the sitemap", async ({ request }) => {
   const response = await request.get("/robots.txt");
   expect(response.status()).toBe(200);
   expect(await response.text()).toContain(
-    "Sitemap: https://bluthsoft-homepage.vercel.app/sitemap-index.xml",
+    `Sitemap: ${new URL("sitemap-index.xml", siteUrl).href}`,
   );
 });

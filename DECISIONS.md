@@ -40,7 +40,7 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **`/privacy` is real,** because the forms collect email addresses and the site records sessions.
 - **Product mockups are HTML/CSS, not images:** sharp at any size, light, and they keep the headline as the first thing to render. Each reads to screen readers as one labelled illustration, and the buttons drawn inside them aren't focusable.
 - **Mobile is designed before it's built:** a 375px frame in Figma covering every section plus the open phone menu, reviewed before implementation. In-between widths are handled in code and checked at 768 and 1024px. The phone nav keeps the logo and Start free visible, with a menu for the rest.
-- **Search:** production is indexable, with a sitemap, robots.txt, canonical URLs pointing at production (also from previews), and `Organization` + `SoftwareApplication` structured data.
+- **Search:** production is indexable, with a sitemap, robots.txt, canonical URLs pointing at production (also from previews), and `Organization` + `SoftwareApplication` structured data on the homepage only (it describes the company and product, so other pages mustn't lend it their wording). Pages marked `noindex` carry no canonical link.
 
 ### AI suggestions I decided against
 

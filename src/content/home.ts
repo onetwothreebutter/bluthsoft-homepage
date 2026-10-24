@@ -8,6 +8,8 @@
  * designed; see DECISIONS.md.
  */
 
+import { site } from "./site";
+
 export interface Link {
   label: string;
   href: string;
@@ -38,7 +40,7 @@ export const home = {
   },
 
   nav: {
-    brand: "BluthSoft",
+    brand: site.name,
     links: [
       { label: "Product", href: anchors.product },
       { label: "Automation", href: anchors.automation },
@@ -57,7 +59,7 @@ export const home = {
       placeholder: "you@yourstand.com",
       submit: "Start free",
     },
-    note: "Free for one stand. No card.",
+    note: site.offer,
     secondary: { label: "See the platform", href: anchors.product },
     rating: {
       score: "4.9",
@@ -317,7 +319,7 @@ export const home = {
   },
 
   footer: {
-    brand: "BluthSoft",
+    brand: site.name,
     tagline:
       "The operating platform for banana stands. Built in Newport Beach.",
     columns: [
