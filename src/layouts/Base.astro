@@ -1,0 +1,67 @@
+---
+import "../styles/global.css";
+import { site } from "../content/site";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute or root-relative URL of the social preview image, once one exists. */
+  image?: string;
+  /**
+   * For pages that should never be indexed (404, form confirmations). Also
+   * drops the canonical link and og:url, which would contradict it.
+   */
+  noindex?: boolean;
+}
+
+const { title, description, image, noindex = false } = Astro.props;
+
+// `site` is always set in astro.config.mjs, so canonical URLs are absolute and
+// point at production even on preview deployments.
+const origin = Astro.site!;
+const canonical = new URL(Astro.url.pathname, origin).href;
+const imageUrl = image ? new URL(image, origin).href : undefined;
+
+// Page-specific head content (the homepage's structured data) goes in the
+// "head" slot, after everything shared.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta
+      name="twitter:card"
+      content={imageUrl ? "summary_large_image" : "summary"}
+    />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only">
+      {site.skipLink}
+    </a>
+    <slot name="header" />
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

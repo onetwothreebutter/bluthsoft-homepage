@@ -1,0 +1,14 @@
+---
+import Base from "../layouts/Base.astro";
+import StructuredData from "../components/StructuredData.astro";
+import { home } from "../content/home";
+
+// Placeholder body so the first deploy has something real on it. Sections
+// arrive once the mobile layout is approved.
+---
+
+<Base title={home.meta.title} description={home.meta.description}>
+  <StructuredData slot="head" description={home.meta.description} />
+  <h1>{home.hero.heading}</h1>
+  <p>{home.hero.lede}</p>
+</Base>
