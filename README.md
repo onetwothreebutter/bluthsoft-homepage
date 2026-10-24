@@ -68,7 +68,13 @@ Every event also carries `environment` (`production`, `preview` or `development`
 
 ## Time spent
 
-TODO — the real total, what it covered, and what was excluded (account signups).
+Budget: 6 hours in two sittings.
+
+| Sitting | Date       | Time      | Covered                                                                                                                                                                                |
+| ------- | ---------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1       | 2026-10-24 | 2.5 hours | Planning, the phone layout in Figma and its review, the build (scaffold, analytics and lead endpoint, every section, the setup questions, `/demo`), and setting up HubSpot and PostHog |
+
+**Total so far: 2.5 of 6 hours.** Setting up HubSpot and PostHog is included, although the plan left account setup out of the budget.
 
 ## What's next
 
