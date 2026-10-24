@@ -1,0 +1,174 @@
+---
+import { home } from "../content/home";
+import Choice from "./Choice.astro";
+import Honeypot from "./Honeypot.astro";
+import SetupStep from "./SetupStep.astro";
+import SignupCard from "./SignupCard.astro";
+
+/*
+ * The setup questions: the signup flow. Only step 1 is designed; steps 2 and
+ * 3 reuse its layout.
+ *
+ * Without JavaScript all three questions show at once as one form that posts
+ * to /api/lead. src/lib/signup.ts turns it into one question at a time and
+ * reads its button labels and errors from the data attributes below.
+ */
+
+const { getStarted } = home;
+const { stands, sells, email } = getStarted.steps;
+const stepOf = (step: number) =>
+  getStarted.stepOf.replace("{step}", String(step)).replace("{total}", "3");
+
+const question =
+  "font-display text-[22px] font-semibold tracking-[-0.025em] focus:outline-none lg:text-[24px]";
+const error = "mt-3 text-[13.5px] text-reorder";
+---
+
+<section
+  id="get-started"
+  data-section="get-started"
+  class="page-gutter scroll-mt-4 pb-16 lg:pb-28"
+>
+  <div class="mx-auto max-w-page">
+    <SignupCard
+      eyebrow={getStarted.eyebrow}
+      heading={getStarted.heading}
+      lede={getStarted.lede}
+      checklist={getStarted.checklist}
+    >
+      <form
+        method="post"
+        action="/api/lead"
+        data-lead-form="setup"
+        data-counter={getStarted.stepOf}
+        data-label-next={getStarted.next}
+        data-label-submit={getStarted.submit}
+        data-label-demo={getStarted.toDemo}
+        data-error-stands={getStarted.errors.stands}
+        data-error-email={getStarted.errors.email}
+        data-network-error={getStarted.errors.network}
+        class="relative"
+      >
+        <input type="hidden" name="intent" value="signup" />
+        <input type="hidden" name="source" value="setup" />
+        <Honeypot />
+
+        <div data-steps class="flex flex-col gap-6">
+          <SetupStep
+            step="stands"
+            counter={stepOf(1)}
+            name={stands.name}
+            progress={1 / 3}
+          >
+            <fieldset>
+              <legend data-question tabindex="-1" class={question}>
+                {stands.question}
+              </legend>
+              <div class="mt-5 flex flex-col gap-2.5">
+                {stands.options.map((choice) => (
+                  <Choice type="radio" name="stands" required {...choice} />
+                ))}
+              </div>
+              <p data-error-for="stands" role="alert" class={error} hidden></p>
+            </fieldset>
+          </SetupStep>
+
+          <SetupStep
+            step="sells"
+            counter={stepOf(2)}
+            name={sells.name}
+            progress={2 / 3}
+          >
+            <fieldset>
+              <legend data-question tabindex="-1" class={question}>
+                {sells.question}
+              </legend>
+              <p class="mt-2 text-[14px] text-ink/60">{sells.hint}</p>
+              <div class="mt-5 flex flex-col gap-2.5">
+                {sells.options.map((choice) => (
+                  <Choice type="checkbox" name="sells" {...choice} />
+                ))}
+              </div>
+            </fieldset>
+          </SetupStep>
+
+          <SetupStep
+            step="email"
+            counter={stepOf(3)}
+            name={email.name}
+            progress={1}
+          >
+            <label
+              for="setup-email"
+              data-question
+              tabindex="-1"
+              class:list={[question, "block"]}
+            >
+              {email.question}
+            </label>
+            <input
+              id="setup-email"
+              type="email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder={email.placeholder}
+              class="mt-5 w-full rounded-tile border border-ink/16 px-4.5 py-4 text-[16px] placeholder:text-ink/45 focus:border-ink focus:outline-none"
+            />
+            <p data-error-for="email" role="alert" class={error} hidden></p>
+          </SetupStep>
+
+          <div>
+            <p
+              data-error-for="form"
+              role="alert"
+              class:list={[error, "mb-4"]}
+              hidden
+            ></p>
+            <div class="flex items-center justify-between border-t border-ink/10 pt-5 pb-1.25">
+              <button
+                type="button"
+                data-back
+                hidden
+                class="rounded-button border border-ink/20 px-4.5 py-3 text-[14.5px] text-ink/72 transition-colors hover:border-ink/40 disabled:text-ink/35 disabled:hover:border-ink/20"
+              >
+                {getStarted.back}
+              </button>
+              <button
+                type="submit"
+                data-next
+                class="ml-auto rounded-button border border-ink bg-banana px-5.5 py-3.25 text-[15px] font-semibold shadow-press transition active:translate-y-[3px] active:shadow-none disabled:opacity-60"
+              >
+                {getStarted.submit}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div data-success hidden tabindex="-1" class="py-6 focus:outline-none">
+          <span
+            aria-hidden="true"
+            class="flex size-10 items-center justify-center rounded-tile border border-ink bg-banana"
+          >
+            <svg viewBox="0 0 12 12" width="18" height="18">
+              <path
+                d="M2.5 6.5 5 9l4.5-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </span>
+          <h3 class="mt-5 font-display text-[24px] font-semibold tracking-[-0.025em]">
+            {getStarted.success.heading}
+          </h3>
+          <p class="mt-2 text-[16px] leading-[1.55] text-ink/72">
+            {getStarted.success.body}
+          </p>
+        </div>
+      </form>
+    </SignupCard>
+  </div>
+</section>

@@ -1,10 +1,5 @@
-import {
-  formDataToObject,
-  honeypotField,
-  parseLead,
-  type Lead,
-  type LeadErrors,
-} from "./lead";
+import { formDataToObject } from "./form-data";
+import { honeypotField, parseLead, type Lead, type LeadErrors } from "./lead";
 import {
   submitToHubSpot,
   type HubSpotConfig,

@@ -47,24 +47,28 @@ Copy `.env.example` to `.env` to set variables locally. Everything runs without 
 
 ## Tracking plan
 
-| Event            | Fires when                                               | Properties                                                  | Answers                                         |
-| ---------------- | -------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
-| `$pageview`      | The page loads                                           | UTM tags, referrer                                          | How many visitors, from where?                  |
-| `CTA Clicked`    | A call to action is clicked                              | `location`, `label`, `destination`                          | Which CTA, in which section, gets clicked?      |
-| `Link Clicked`   | A link to a page that doesn't exist yet is clicked       | `location`, `label`, `destination`                          | Which missing page do visitors want most?       |
-| `Section Viewed` | A section's top passes 60% down the viewport (once each) | `section`                                                   | How far down the page do people get?            |
-| `Form Started`   | A visitor first types into a form                        | `form` (`hero`, …)                                          | Does the form attract attempts?                 |
-| `Form Submitted` | A form passes the browser's checks and is sent           | `form`                                                      | Where do attempts drop off?                     |
-| `Form Error`     | TODO (signup flow PR)                                    |                                                             | Which field trips people up?                    |
-| `Lead Created`   | The server accepted a signup (server-side)               | `intent`, `source`, `stands`, `sells`, `referrer`, UTM tags | How many signups, from which form and campaign? |
-| `Demo Requested` | The server accepted a demo request (server-side)         | `intent`, `source`, `stands`, `sells`, `referrer`, UTM tags | How many sales conversations?                   |
+| Event                 | Fires when                                                                                 | Properties                                                          | Answers                                         |
+| --------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ----------------------------------------------- |
+| `$pageview`           | The page loads                                                                             | UTM tags, referrer                                                  | How many visitors, from where?                  |
+| `CTA Clicked`         | A call to action is clicked                                                                | `location`, `label`, `destination`                                  | Which CTA, in which section, gets clicked?      |
+| `Link Clicked`        | A link to a page that doesn't exist yet is clicked                                         | `location`, `label`, `destination`                                  | Which missing page do visitors want most?       |
+| `Section Viewed`      | A section's top passes 60% down the viewport (once each)                                   | `section`                                                           | How far down the page do people get?            |
+| `Form Started`        | A visitor first types into, or picks an answer in, a form                                  | `form` (`hero`, `setup`, `demo`)                                    | Does the form attract attempts?                 |
+| `Form Step Completed` | A setup question is answered                                                               | `form`, `step`, `step_number`, and the answer (`stands` or `sells`) | Which question loses people?                    |
+| `Form Submitted`      | A form is sent to the server                                                               | `form`                                                              | Where do attempts drop off?                     |
+| `Form Error`          | A form can't be sent: a field fails the check, the server rejects it, or the network fails | `form`, `fields`                                                    | Which field trips people up?                    |
+| `Lead Created`        | The server accepted a signup (server-side)                                                 | `intent`, `source`, `stands`, `sells`, `referrer`, UTM tags         | How many signups, from which form and campaign? |
+| `Demo Requested`      | The server accepted a demo request (server-side)                                           | `intent`, `source`, `stands`, `sells`, `referrer`, UTM tags         | How many sales conversations?                   |
+
+A hero signup followed by the setup questions sends the same lead twice (the second adds the answers), so it records `Lead Created` twice: `source` hero, then setup. Count signups as people, not events. "More than 20" carries the visitor to `/demo` in the link, so `Demo Requested` joins the same person's funnel.
 
 Every event also carries `environment` (`production`, `preview` or `development`), so QA traffic on preview deployments can be filtered out.
 
 ## Tests
 
-- **Unit (Vitest):** lead validation, the honeypot, stub mode, HubSpot field mapping, error handling and timeout, the conversion event, UTM parsing, the analytics wrapper (a no-op without a key; replays early calls once loaded; stops queueing if PostHog can't load), the page-level click and section listeners and the form events (in happy-dom), and which links count as unbuilt pages.
-- **Browser (Playwright):** the page's search tags and structured data, `robots.txt`, the lead endpoint, the hero form posted without JavaScript, the phone menu, the 404 page and `/privacy`.
+- **Unit (Vitest):** lead validation, the honeypot, stub mode, HubSpot field mapping, error handling and timeout, the conversion event, UTM parsing, the analytics wrapper (a no-op without a key; replays early calls once loaded; stops queueing if PostHog can't load), the page-level click and section listeners and the form events (in happy-dom), which links count as unbuilt pages, the `/demo` hand-off, and the setup questions (step by step, skipping the email the hero already took, "More than 20" to `/demo`, server errors).
+- **Browser (Playwright):** the page's search tags and structured data, `robots.txt`, the lead endpoint, the phone menu, the 404 page and `/privacy`, and every signup path: the setup questions, a hero signup carried into them, "More than 20" arriving at `/demo` with the answer filled in, the demo form, and both forms posted without JavaScript.
+- **Browser tests never reach HubSpot or PostHog:** `playwright.config.ts` starts its own server with those keys blanked, so a local `.env` can't turn a test run into real contacts.
 
 ## Time spent
 

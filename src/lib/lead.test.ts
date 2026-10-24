@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formDataToObject, parseLead } from "./lead";
+import { parseLead } from "./lead";
 
 const signup = { email: "gob@bluth.com", intent: "signup", source: "hero" };
 
@@ -83,15 +83,18 @@ describe("parseLead", () => {
   });
 });
 
-describe("formDataToObject", () => {
-  it("reads every field once, with sells as a list", () => {
-    const form = new FormData();
-    form.append("email", "gob@bluth.com");
-    form.append("sells", "Frozen bananas");
-    form.append("sells", "Drinks");
-    expect(formDataToObject(form)).toEqual({
-      email: "gob@bluth.com",
-      sells: ["Frozen bananas", "Drinks"],
-    });
+describe("parseLead: what you sell", () => {
+  const base = { email: "gob@bluth.com", intent: "signup", source: "setup" };
+
+  it("accepts the setup questions' answers", () => {
+    const result = parseLead({ ...base, sells: ["frozen-bananas", "drinks"] });
+    expect(result.ok && result.lead.sells).toEqual([
+      "frozen-bananas",
+      "drinks",
+    ]);
+  });
+
+  it("rejects an answer the questions don't offer", () => {
+    expect(parseLead({ ...base, sells: ["cornballers"] }).ok).toBe(false);
   });
 });

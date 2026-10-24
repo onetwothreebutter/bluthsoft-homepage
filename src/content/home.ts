@@ -15,6 +15,15 @@ import { site } from "./site";
 export const standsValues = ["1", "2-5", "6-20", "20+"] as const;
 export type Stands = (typeof standsValues)[number];
 
+/** Answers for "What do you sell?" (any number of them). Also what the lead endpoint accepts. */
+export const sellsValues = [
+  "frozen-bananas",
+  "fresh-fruit",
+  "drinks",
+  "snacks",
+] as const;
+export type Sells = (typeof sellsValues)[number];
+
 export const home = {
   // New copy (not in the design): the document title and meta description.
   meta: {
@@ -257,11 +266,14 @@ export const home = {
       "Import from a spreadsheet or start clean",
       "Live before your next shift",
     ],
-    // Step 1 is designed; steps 2 ("What do you sell?") and 3 (email) are new
-    // copy, added with the quiz.
+    // Step 1 is designed. Steps 2 and 3, the step counter's wording for other
+    // steps, the buttons other than Back/Continue, the errors and the success
+    // messages are new copy.
+    // "STEP 1 OF 3" in the design; the numbers change with the step, and the
+    // total is 2 when the email already came from the hero form.
+    stepOf: "STEP {step} OF {total}",
     steps: {
       stands: {
-        progress: "STEP 1 OF 3",
         name: "Your stands",
         question: "How many stands do you run?",
         options: [
@@ -283,9 +295,54 @@ export const home = {
           },
         ] satisfies readonly { value: Stands; label: string; hint: string }[],
       },
+      sells: {
+        name: "Your menu",
+        question: "What do you sell?",
+        hint: "Pick any that apply. We’ll load the items for you.",
+        options: [
+          {
+            value: "frozen-bananas",
+            label: "Frozen bananas",
+            hint: "Dipped, nutted, on a stick",
+          },
+          {
+            value: "fresh-fruit",
+            label: "Fresh fruit",
+            hint: "Whole, sliced or in cups",
+          },
+          { value: "drinks", label: "Drinks", hint: "Lemonade, smoothies" },
+          {
+            value: "snacks",
+            label: "Snacks & extras",
+            hint: "Toppings, chips, merch",
+          },
+        ] satisfies readonly { value: Sells; label: string; hint: string }[],
+      },
+      email: {
+        name: "Your email",
+        question: "Where should we send your login?",
+        placeholder: "you@yourstand.com",
+      },
     },
     back: "Back",
     next: "Continue",
+    submit: "Start free",
+    // Shown on the Continue button when "More than 20" is chosen: it goes to /demo.
+    toDemo: "Book a demo",
+    errors: {
+      stands: "Choose how many stands you run.",
+      email: "Enter an email address like you@yourstand.com.",
+      network:
+        "We couldn’t reach BluthSoft. Check your connection and try again.",
+    },
+    success: {
+      heading: "Your stand is on its way.",
+      body: "We’ll email you a link to your account, with your items and par levels already loaded.",
+    },
+    // Replaces the hero form once its signup goes through; the page then
+    // scrolls to the setup questions.
+    heroSuccess:
+      "You’re in. Answer two quick questions below and we’ll set up your stand.",
   },
 
   finalCta: {

@@ -1,5 +1,6 @@
 ---
 import FinalCta from "../components/FinalCta.astro";
+import GetStarted from "../components/GetStarted.astro";
 import Hero from "../components/Hero.astro";
 import StructuredData from "../components/StructuredData.astro";
 import { home } from "../content/home";
@@ -9,5 +10,13 @@ import Page from "../layouts/Page.astro";
 <Page title={home.meta.title} description={home.meta.description}>
   <StructuredData slot="head" description={home.meta.description} />
   <Hero />
+  <GetStarted />
   <FinalCta />
 </Page>
+
+<script>
+  import { analytics } from "../lib/analytics-client";
+  import { bindSignup } from "../lib/signup";
+
+  bindSignup(document, analytics);
+</script>

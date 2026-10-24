@@ -1,0 +1,61 @@
+---
+// An answer card in the setup questions, as designed for step 1: the radio
+// indicators are the frame's; the checkbox (step 2) follows their style.
+interface Props {
+  type: "radio" | "checkbox";
+  name: string;
+  value: string;
+  label: string;
+  hint: string;
+  required?: boolean;
+}
+
+const { type, name, value, label, hint, required = false } = Astro.props;
+---
+
+<label class="group flex cursor-pointer items-center gap-3.5 rounded-tile border border-ink/16 bg-white px-4.5 py-4 transition-colors hover:border-ink/40 has-checked:border-ink has-checked:bg-cream has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ink">
+  <input {type} {name} {value} {required} class="sr-only" />
+  {type === "radio" ? (
+    <>
+      <img
+        src="/images/radio-off.svg"
+        width="18"
+        height="18"
+        alt=""
+        class="group-has-checked:hidden"
+      />
+      <img
+        src="/images/radio-on.svg"
+        width="18"
+        height="18"
+        alt=""
+        class="hidden group-has-checked:block"
+      />
+    </>
+  ) : (
+    <span
+      aria-hidden="true"
+      class="flex size-4.5 shrink-0 items-center justify-center rounded-[5px] border border-ink/30 group-has-checked:border-ink group-has-checked:bg-banana"
+    >
+      <svg
+        viewBox="0 0 12 12"
+        width="12"
+        height="12"
+        class="hidden group-has-checked:block"
+      >
+        <path
+          d="M2.5 6.5 5 9l4.5-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </span>
+  )}
+  <span class="flex flex-col gap-0.5">
+    <span class="text-[15.5px] font-medium">{label}</span>
+    <span class="text-[13px] text-ink/60">{hint}</span>
+  </span>
+</label>

@@ -19,6 +19,43 @@ export const notFound = {
   secondary: { label: "Back to the homepage", href: "/" },
 } as const;
 
+/** For more than 20 stands, and every "Book a demo" link. */
+export const demo = {
+  meta: {
+    title: `Book a demo — ${site.name}`,
+    description:
+      "Running more than a few stands? Tell us about them and we’ll walk you through BluthSoft with your own menu.",
+  },
+  eyebrow: "BOOK A DEMO",
+  heading: "Running more than a few stands? Let’s talk.",
+  lede: "Tell us about your stands and we’ll walk you through BluthSoft with your own items, par levels and rules.",
+  checklist: [
+    "A walkthrough with your own menu",
+    "Reporting across every location",
+    "Help moving off spreadsheets",
+  ],
+  form: {
+    name: "Your name",
+    email: "Work email",
+    emailPlaceholder: "you@yourstand.com",
+    stands: "How many stands do you run?",
+    standsPlaceholder: "Choose one",
+    note: "Anything we should know?",
+    optional: "Optional",
+    submit: "Book a demo",
+  },
+  errors: {
+    name: "Tell us who to ask for.",
+    email: "Enter an email address like you@yourstand.com.",
+    network:
+      "We couldn’t reach BluthSoft. Check your connection and try again.",
+  },
+  success: {
+    heading: "Thanks — we’ll be in touch.",
+    body: "Someone from BluthSoft will email you within a day to find a time.",
+  },
+} as const;
+
 /** Where a form submitted without JavaScript lands. */
 export const thanks = {
   meta: {

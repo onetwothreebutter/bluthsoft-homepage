@@ -16,9 +16,8 @@ export function leadContext(analytics: Analytics): Record<string, string> {
 
 /**
  * Wires up every `form[data-lead-form]` (the attribute's value names the form
- * in events): `Form Started` on the first input, `Form Submitted` when it
- * passes the browser's validation and is sent, and the lead context added to
- * the submission.
+ * in events): `Form Started` on the first input, and the lead context added
+ * to the submission. Sending, and the events about it, is signup.ts.
  *
  * The context is added in the `formdata` event, which fires for a native post
  * and for `new FormData(form)` alike, so it needs no hidden inputs.
@@ -32,9 +31,6 @@ export function bindLeadForms(root: Document, analytics: Analytics): void {
       "input",
       () => analytics.track("Form Started", { form: name }),
       { once: true },
-    );
-    form.addEventListener("submit", () =>
-      analytics.track("Form Submitted", { form: name }),
     );
     form.addEventListener("formdata", (event) => {
       for (const [key, value] of Object.entries(leadContext(analytics)))

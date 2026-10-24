@@ -54,18 +54,6 @@ describe("bindLeadForms", () => {
     });
   });
 
-  it("records Form Submitted when the form is sent", () => {
-    const form = renderForm();
-    const analytics = fakeAnalytics();
-    bindLeadForms(document, analytics);
-
-    form.dispatchEvent(new Event("submit", { cancelable: true }));
-
-    expect(analytics.track).toHaveBeenCalledWith("Form Submitted", {
-      form: "hero",
-    });
-  });
-
   it("adds the lead context to the submitted data", () => {
     const form = renderForm();
     bindLeadForms(document, fakeAnalytics());

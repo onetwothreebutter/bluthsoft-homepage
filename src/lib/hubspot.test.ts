@@ -8,7 +8,7 @@ const lead: Lead = {
   source: "demo",
   name: "Lucille Bluth",
   stands: "20+",
-  sells: ["Frozen bananas", "Drinks"],
+  sells: ["frozen-bananas", "drinks"],
   utm_source: "newsletter",
 };
 
@@ -20,7 +20,7 @@ describe("hubspotFields", () => {
       { objectTypeId: "0-1", name: "lead_intent", value: "demo" },
       { objectTypeId: "0-1", name: "lead_source", value: "demo" },
       { objectTypeId: "0-1", name: "stands", value: "20+" },
-      { objectTypeId: "0-1", name: "sells", value: "Frozen bananas;Drinks" },
+      { objectTypeId: "0-1", name: "sells", value: "frozen-bananas;drinks" },
       { objectTypeId: "0-1", name: "utm_source", value: "newsletter" },
     ]);
   });
