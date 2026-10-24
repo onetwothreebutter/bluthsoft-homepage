@@ -31,6 +31,8 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **Session replay is on with every input masked.**
 - **UTM tags and the referrer** are read from the landing URL and attached to every event and to every form submission.
 - **Event names follow Segment's Object Action style:** `CTA Clicked`, `Form Started` / `Submitted` / `Error`, `Lead Created`, `Demo Requested`, `Section Viewed`, `Link Clicked`.
+- **Memory persistence, not PostHog's `cookieless_mode`.** Cookieless mode is the obvious fit for "no cookies", but it assigns identity on PostHog's servers, which leaves the browser no ID to send with the form — so the server-side `Lead Created` couldn't join the visitor's funnel.
+- **IP addresses are dropped by a PostHog project setting, not in code.** The SDK's `ip` option is deprecated and has no effect.
 
 ### Content and design
 
