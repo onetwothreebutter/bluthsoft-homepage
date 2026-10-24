@@ -1,5 +1,5 @@
 import type { Lead } from "./lead";
-import { utmKeys } from "./analytics";
+import { utmKeys } from "./attribution";
 
 /**
  * HubSpot's Forms API v3 submit endpoint (the unauthenticated one: it needs
@@ -49,6 +49,7 @@ export async function submitToHubSpot(
   config: HubSpotConfig,
   context: HubSpotContext,
   fetchImpl: typeof fetch = fetch,
+  timeoutMs = 10_000,
 ): Promise<void> {
   const response = await fetchImpl(
     hubspotSubmitUrl(config.portalId, config.formGuid),
@@ -56,6 +57,9 @@ export async function submitToHubSpot(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fields: hubspotFields(lead), context }),
+      // A hung HubSpot rejects here and takes the handler's friendly 502 path,
+      // instead of the visitor waiting out the platform's function timeout.
+      signal: AbortSignal.timeout(timeoutMs),
     },
   );
   if (!response.ok) {

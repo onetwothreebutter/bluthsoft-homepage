@@ -1,5 +1,9 @@
 import type { APIRoute } from "astro";
-import { PUBLIC_POSTHOG_HOST, PUBLIC_POSTHOG_KEY } from "astro:env/client";
+import {
+  PUBLIC_POSTHOG_HOST,
+  PUBLIC_POSTHOG_KEY,
+  PUBLIC_VERCEL_ENV,
+} from "astro:env/client";
 import { HUBSPOT_FORM_GUID, HUBSPOT_PORTAL_ID } from "astro:env/server";
 import { handleLead } from "../../lib/lead-handler";
 
@@ -17,4 +21,5 @@ export const POST: APIRoute = ({ request }) =>
     posthog: PUBLIC_POSTHOG_KEY
       ? { key: PUBLIC_POSTHOG_KEY, host: PUBLIC_POSTHOG_HOST }
       : undefined,
+    environment: PUBLIC_VERCEL_ENV,
   });

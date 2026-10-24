@@ -23,16 +23,23 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **The "Set up your stand in three questions" quiz is the signup flow:** how many stands → what you sell → your email. Only step 1 was designed; steps 2 and 3 follow its pattern. Every "Start free" and "Build your first rule" CTA scrolls to it. Without JavaScript it renders as one form posting to the same endpoint.
 - **"More than 20" stands routes to `/demo`,** a real page with a short form (name, work email, stands, optional note). "Book a demo" goes there too. Not a booking widget: bookings would land on a real person's calendar.
 - **Leads go to HubSpot** through a server route that validates the form and traps spam bots, and the conversion is recorded server-side so ad blockers can't hide it. If HubSpot isn't configured, the route is a clearly labelled stub.
+- **A HubSpot failure fails the submission; a PostHog failure doesn't.** If HubSpot rejects the lead, or doesn't answer within 10 seconds, the visitor gets "We couldn't save that just now. Please try again in a minute." A failed analytics event is only logged: it isn't worth losing a signup over.
+- **Previews don't send leads to HubSpot.** `HUBSPOT_*` is set for Production only, so testing the forms on a preview link runs the labelled stub instead of creating real contacts.
+- **Without JavaScript, a validation error gets its own short page** listing what to fix. Redirecting back to the form would show the same empty, prerendered form with no explanation.
 
 ### Measurement
 
-- **PostHog behind a Segment-shaped `track()` / `page()` / `identify()` wrapper,** so moving to Segment later is a change in one file. PostHog over GA4 because funnels and session replay are available the same day.
-- **No cookies, no consent banner.** PostHog keeps its ID in memory and IPs are dropped. The whole funnel happens on one page, so it still measures end to end; the cost is that return visits aren't linked.
+- **PostHog behind a Segment-shaped `track()` / `page()` / `identify()` wrapper,** so moving to Segment later is a change in two files: `analytics.ts` in the browser and `conversion.ts` on the server. PostHog over GA4 because funnels and session replay are available the same day.
+- **No cookies, no consent banner.** PostHog keeps its ID in memory and IPs are dropped. The homepage funnel happens on one page, so it measures end to end there; the cost is that return visits aren't linked. `/demo` is a separate page, so a demo request starts a new ID with no campaign data (see Open questions).
 - **Session replay is on with every input masked.**
 - **UTM tags and the referrer** are read from the landing URL and attached to every event and to every form submission.
 - **Event names follow Segment's Object Action style:** `CTA Clicked`, `Form Started` / `Submitted` / `Error`, `Lead Created`, `Demo Requested`, `Section Viewed`, `Link Clicked`.
 - **Memory persistence, not PostHog's `cookieless_mode`.** Cookieless mode is the obvious fit for "no cookies", but it assigns identity on PostHog's servers, which leaves the browser no ID to send with the form — so the server-side `Lead Created` couldn't join the visitor's funnel.
 - **IP addresses are dropped by a PostHog project setting, not in code.** The SDK's `ip` option is deprecated and has no effect.
+- **Autocapture is off; page views and clicks are recorded explicitly,** so the event stream is the tracking plan rather than every click on the page.
+- **The server reuses the public PostHog key** for conversion events. It's write-only and already in the page, so there's no second secret to manage.
+- **Server-side events skip GeoIP.** They're sent from Vercel's region, so GeoIP would place every lead there.
+- **Every event carries `environment`** (production, preview or development), read from Vercel at build time, so QA traffic on preview links can be filtered out of the funnel.
 
 ### Content and design
 
@@ -52,6 +59,7 @@ A running log of what was decided, why, and what was changed from the supplied d
 
 ## Open questions
 
+- **How a visitor's ID and campaign data reach `/demo`.** The analytics ID lives in memory for one page view, so a demo request arrives with a new ID and no UTM tags, and can't be joined to the homepage visit that led to it. (The clicks that lead there, `CTA Clicked` and `Link Clicked`, fire on the homepage and keep their campaign data.) To settle before the `/demo` PR.
 - **Where the hero product card sits on phones.** The mobile layout keeps it after the email form and rating, so signup is reachable without much scrolling. Moving it up to right after the subheading would lead with the product, but pushes the email form about 1,000px down the page, below the first screen on any phone. A sticky nav that keeps Start free visible would soften that.
 - **A scrolling marquee for the "Running on BluthSoft" strip on phones** — one row of names looping instead of three wrapped rows. If it ships, it needs a way to stop it (a pause button, or one pass and then stop; WCAG 2.2.2), the repeated names hidden from screen readers, and a still, swipeable row when the device asks for reduced motion.
 

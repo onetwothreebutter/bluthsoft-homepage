@@ -31,6 +31,13 @@ export default defineConfig({
         access: "public",
         default: "https://us.i.posthog.com",
       }),
+      // Which Vercel deployment this is, from Vercel's own VERCEL_ENV at build
+      // time. Events carry it so QA traffic on previews can be filtered out.
+      PUBLIC_VERCEL_ENV: envField.string({
+        context: "client",
+        access: "public",
+        default: process.env.VERCEL_ENV ?? "development",
+      }),
       HUBSPOT_PORTAL_ID: envField.string({
         context: "server",
         access: "secret",

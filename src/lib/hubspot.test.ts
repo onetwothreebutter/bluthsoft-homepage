@@ -62,4 +62,19 @@ describe("submitToHubSpot", () => {
       submitToHubSpot(lead, config, context, fetchImpl),
     ).rejects.toThrow(/400.*FIELD_NOT_IN_FORM_DEFINITION/);
   });
+
+  it("gives up on a HubSpot that doesn't answer", async () => {
+    // Never responds; only rejects when the request is aborted.
+    const fetchImpl = vi.fn<typeof fetch>(
+      (_url, init) =>
+        new Promise((_resolve, reject) =>
+          init?.signal?.addEventListener("abort", () =>
+            reject(init.signal?.reason),
+          ),
+        ),
+    );
+    await expect(
+      submitToHubSpot(lead, config, context, fetchImpl, 20),
+    ).rejects.toThrow(/timed out|timeout/i);
+  });
 });

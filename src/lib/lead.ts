@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { standsValues } from "../content/home";
-import { utmKeys } from "./analytics";
+import { utmKeys } from "./attribution";
 
 /**
  * What a signup or demo request may contain, from any of the three forms
@@ -28,6 +28,9 @@ export const leadSchema = z
       .string({ error: "Enter your email address." })
       .trim()
       .toLowerCase()
+      // An empty box arrives as "" (form posts always send the field), so the
+      // missing-email message has to come from here, not the type check.
+      .min(1, { error: "Enter your email address." })
       .pipe(
         z.email({ error: "Enter an email address like you@yourstand.com." }),
       ),

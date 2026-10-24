@@ -1,6 +1,6 @@
 import { PostHog } from "posthog-node";
 import type { Lead } from "./lead";
-import { utmKeys } from "./analytics";
+import { utmKeys } from "./attribution";
 
 export interface ConversionEvent {
   event: "Lead Created" | "Demo Requested";
@@ -16,7 +16,14 @@ export interface ConversionEvent {
  */
 export function conversionEvent(
   lead: Lead,
-  newId: () => string = () => crypto.randomUUID(),
+  {
+    environment,
+    newId = () => crypto.randomUUID(),
+  }: {
+    /** Deployment environment, so preview QA can be filtered out. */
+    environment?: string;
+    newId?: () => string;
+  } = {},
 ): ConversionEvent {
   return {
     event: lead.intent === "demo" ? "Demo Requested" : "Lead Created",
@@ -30,6 +37,7 @@ export function conversionEvent(
       sells: lead.sells,
       referrer: lead.referrer,
       ...Object.fromEntries(utmKeys.map((key) => [key, lead[key]])),
+      environment,
     },
   };
 }

@@ -35,8 +35,16 @@ describe("conversionEvent", () => {
   it("falls back to a fresh ID when the form was posted without JavaScript", () => {
     const event = conversionEvent(
       { email: "gob@bluth.com", intent: "signup", source: "setup" },
-      () => "generated",
+      { newId: () => "generated" },
     );
     expect(event.distinctId).toBe("generated");
+  });
+
+  it("carries the deployment environment, so preview QA can be filtered out", () => {
+    const event = conversionEvent(
+      { email: "gob@bluth.com", intent: "signup", source: "hero" },
+      { environment: "preview" },
+    );
+    expect(event.properties).toMatchObject({ environment: "preview" });
   });
 });

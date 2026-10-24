@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   createAnalytics,
-  readAttribution,
+  createReplayQueue,
   type PostHogClient,
 } from "./analytics";
 
@@ -13,40 +13,10 @@ function fakePostHog() {
     init: vi.fn(),
     capture: vi.fn(),
     identify: vi.fn(),
+    register: vi.fn(),
     get_distinct_id: vi.fn(() => "anon-123"),
   } satisfies PostHogClient;
 }
-
-describe("readAttribution", () => {
-  it("keeps the UTM tags that have values and ignores other parameters", () => {
-    expect(readAttribution(landing)).toEqual({
-      utm_source: "newsletter",
-      utm_medium: "email",
-      utm_campaign: "frozen-week",
-    });
-  });
-
-  it("records an external referrer but not one from this site", () => {
-    expect(
-      readAttribution(
-        "https://bluthsoft-homepage.vercel.app/",
-        "https://news.ycombinator.com/item?id=1",
-      ),
-    ).toEqual({ referrer: "https://news.ycombinator.com/item?id=1" });
-    expect(
-      readAttribution(
-        "https://bluthsoft-homepage.vercel.app/",
-        "https://bluthsoft-homepage.vercel.app/privacy",
-      ),
-    ).toEqual({});
-  });
-
-  it("ignores a referrer that isn't a URL", () => {
-    expect(
-      readAttribution("https://bluthsoft-homepage.vercel.app/", "not a url"),
-    ).toEqual({});
-  });
-});
 
 describe("createAnalytics without a key", () => {
   it("never loads the provider and turns every call into a no-op", () => {
@@ -125,6 +95,19 @@ describe("createAnalytics with a key", () => {
     expect(analytics.anonymousId()).toBe("anon-123");
   });
 
+  it("tags every event with the deployment environment", async () => {
+    const posthog = fakePostHog();
+    createAnalytics({
+      key: "phc_test",
+      url: landing,
+      environment: "preview",
+      load: async () => posthog,
+    });
+    await vi.waitFor(() =>
+      expect(posthog.register).toHaveBeenCalledWith({ environment: "preview" }),
+    );
+  });
+
   it("keeps the page working when PostHog can't load", async () => {
     const analytics = createAnalytics({
       key: "phc_test",
@@ -134,5 +117,28 @@ describe("createAnalytics with a key", () => {
     analytics.track("CTA Clicked");
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(analytics.anonymousId()).toBeNull();
+  });
+});
+
+describe("createReplayQueue", () => {
+  it("holds calls until the provider is ready, then replays them in order", () => {
+    const calls = createReplayQueue<string[]>();
+    calls.run((log) => log.push("first"));
+    calls.run((log) => log.push("second"));
+    expect(calls.pending).toBe(2);
+
+    const log: string[] = [];
+    calls.ready(log);
+    calls.run((target) => target.push("after"));
+    expect(log).toEqual(["first", "second", "after"]);
+    expect(calls.pending).toBe(0);
+  });
+
+  it("stops holding calls once the provider has failed to load", () => {
+    const calls = createReplayQueue<string[]>();
+    calls.run((log) => log.push("before"));
+    calls.fail();
+    for (let i = 0; i < 50; i++) calls.run((log) => log.push("later"));
+    expect(calls.pending).toBe(0);
   });
 });

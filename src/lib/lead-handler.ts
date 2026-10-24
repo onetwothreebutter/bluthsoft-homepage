@@ -34,6 +34,8 @@ export interface LeadHandlerDeps {
   hubspot?: HubSpotConfig;
   /** Unset → no server-side conversion event. */
   posthog?: PostHogServerConfig;
+  /** Deployment environment (production, preview, development), attached to the conversion event. */
+  environment?: string;
   submit?: (
     lead: Lead,
     config: HubSpotConfig,
@@ -78,14 +80,14 @@ export async function handleLead(
   // learns nothing, and the lead goes nowhere.
   if (body[honeypotField]) {
     log.info("[lead] dropped: honeypot field filled");
-    return respondOk(isJson, request, { stub: false });
+    return respondOk(isJson, request, { stub: !deps.hubspot });
   }
 
   const parsed = parseLead(body);
   if (!parsed.ok) return respondInvalid(isJson, request, parsed.errors);
   const { lead } = parsed;
 
-  const page = new URL(request.headers.get("referer") ?? request.url);
+  const page = formPage(request) ?? new URL(request.url);
   if (deps.hubspot) {
     try {
       await submit(lead, deps.hubspot, {
@@ -106,7 +108,10 @@ export async function handleLead(
 
   if (deps.posthog) {
     try {
-      await record(conversionEvent(lead), deps.posthog);
+      await record(
+        conversionEvent(lead, { environment: deps.environment }),
+        deps.posthog,
+      );
     } catch (error) {
       // The lead is safe in HubSpot; losing its analytics event isn't worth
       // failing the visitor's submission over.
@@ -165,16 +170,25 @@ function page(title: string, body: string): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${title} · BluthSoft</title></head><body><main><h1>${title}</h1>${body}</main></body></html>`;
 }
 
-/** The page the form was on, if it was ours; otherwise the homepage. (No `history.back()`: this page exists for visitors without JavaScript.) */
-function backTo(request: Request): string {
-  const origin = new URL(request.url).origin;
+/**
+ * The page the form was on, from the Referer, if it's one of ours. Anything
+ * else (missing, malformed, another site) is null: a JSON caller can send any
+ * Referer it likes, and shouldn't get to choose the page HubSpot records.
+ */
+function formPage(request: Request): URL | null {
   try {
     const referer = new URL(request.headers.get("referer") ?? "");
-    if (referer.origin === origin) return referer.pathname + referer.search;
+    if (referer.origin === new URL(request.url).origin) return referer;
   } catch {
     // No or malformed Referer.
   }
-  return "/";
+  return null;
+}
+
+/** Where "Go back and fix it" leads: the form's page, or the homepage. (No `history.back()`: this page exists for visitors without JavaScript.) */
+function backTo(request: Request): string {
+  const page = formPage(request);
+  return page ? page.pathname + page.search : "/";
 }
 
 function escapeHtml(text: string): string {

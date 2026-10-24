@@ -8,6 +8,7 @@
  */
 
 import type { PostHogConfig } from "posthog-js";
+import { readAttribution, type Attribution } from "./attribution";
 
 export type Properties = Record<string, unknown>;
 
@@ -16,6 +17,7 @@ export interface PostHogClient {
   init(key: string, config: Partial<PostHogConfig>): unknown;
   capture(event: string, properties?: Properties): unknown;
   identify(id: string, traits?: Properties): void;
+  register(properties: Properties): void;
   get_distinct_id(): string;
 }
 
@@ -37,40 +39,43 @@ export interface AnalyticsOptions {
   /** The landing URL, read once for UTM tags. */
   url: string;
   referrer?: string;
+  /** Deployment environment (production, preview, development), attached to every event so QA traffic on previews can be filtered out. */
+  environment?: string;
   /** Loads the provider. Defaults to a dynamic import so posthog-js is split out of the page bundle. */
   load?: () => Promise<PostHogClient>;
 }
 
-export const utmKeys = [
-  "utm_source",
-  "utm_medium",
-  "utm_campaign",
-  "utm_term",
-  "utm_content",
-] as const;
-
-export type Attribution = Partial<
-  Record<(typeof utmKeys)[number] | "referrer", string>
->;
-
-/** UTM tags from the landing URL, plus the referrer when it's another site. */
-export function readAttribution(url: string, referrer = ""): Attribution {
-  const landing = new URL(url);
-  const attribution: Attribution = {};
-  for (const key of utmKeys) {
-    const value = landing.searchParams.get(key)?.trim();
-    if (value) attribution[key] = value;
-  }
-  if (referrer) {
-    try {
-      // A same-site referrer is just in-page navigation, not a source.
-      if (new URL(referrer).origin !== landing.origin)
-        attribution.referrer = referrer;
-    } catch {
-      // Not a URL (some browsers send "android-app://…" and similar); ignore it.
-    }
-  }
-  return attribution;
+/**
+ * Holds calls made before the provider loads and replays them, in order, once
+ * it does. If it never loads (an ad blocker, or offline), held calls are
+ * dropped and later ones are ignored rather than piling up for the life of
+ * the page.
+ */
+export function createReplayQueue<T>() {
+  let target: T | null = null;
+  let failed = false;
+  const queue: Array<(target: T) => void> = [];
+  return {
+    run(call: (target: T) => void) {
+      if (target) call(target);
+      else if (!failed) queue.push(call);
+    },
+    ready(value: T) {
+      target = value;
+      for (const call of queue.splice(0)) call(value);
+    },
+    fail() {
+      failed = true;
+      queue.length = 0;
+    },
+    /** Calls waiting for the provider. */
+    get pending() {
+      return queue.length;
+    },
+    get current() {
+      return target;
+    },
+  };
 }
 
 const defaultLoad = async (): Promise<PostHogClient> =>
@@ -90,11 +95,8 @@ export function createAnalytics(options: AnalyticsOptions): Analytics {
   }
 
   const key = options.key;
-  let client: PostHogClient | null = null;
-  // Calls made before posthog-js arrives are replayed in order once it does.
-  const queue: Array<(ph: PostHogClient) => void> = [];
-  const run = (call: (ph: PostHogClient) => void) =>
-    client ? call(client) : queue.push(call);
+  const calls = createReplayQueue<PostHogClient>();
+  const run = calls.run;
 
   (options.load ?? defaultLoad)()
     .then((ph) => {
@@ -115,12 +117,13 @@ export function createAnalytics(options: AnalyticsOptions): Analytics {
         person_profiles: "identified_only",
         session_recording: { maskAllInputs: true },
       });
-      client = ph;
-      for (const call of queue.splice(0)) call(ph);
+      if (options.environment)
+        ph.register({ environment: options.environment });
+      calls.ready(ph);
     })
     .catch(() => {
       // Blocked by an ad blocker or offline: analytics is lost, the page isn't.
-      queue.length = 0;
+      calls.fail();
     });
 
   return {
@@ -133,7 +136,7 @@ export function createAnalytics(options: AnalyticsOptions): Analytics {
     identify(id, traits) {
       run((ph) => ph.identify(id, traits));
     },
-    anonymousId: () => client?.get_distinct_id() ?? null,
+    anonymousId: () => calls.current?.get_distinct_id() ?? null,
     attribution: () => ({ ...attribution }),
   };
 }

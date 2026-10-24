@@ -19,6 +19,15 @@ describe("parseLead", () => {
     });
   });
 
+  it("asks for an email when the box was left empty", () => {
+    for (const email of ["", "   "]) {
+      expect(parseLead({ ...signup, email })).toEqual({
+        ok: false,
+        errors: { email: "Enter your email address." },
+      });
+    }
+  });
+
   it("requires a name for a demo request", () => {
     const result = parseLead({
       email: "lucille@bluth.com",

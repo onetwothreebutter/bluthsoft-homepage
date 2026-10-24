@@ -87,17 +87,19 @@ describe("handleLead — validation", () => {
 });
 
 describe("handleLead — honeypot", () => {
-  it("answers a bot exactly like a person but forwards and records nothing", async () => {
-    const d = deps({ hubspot, posthog });
-    const response = await handleLead(
-      json({ ...signup, website: "http://spam.example" }),
-      d,
-    );
+  const bot = { ...signup, website: "http://spam.example" };
 
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ ok: true, stub: false });
-    expect(d.submit).not.toHaveBeenCalled();
-    expect(d.record).not.toHaveBeenCalled();
+  it("answers a bot exactly like a person, with HubSpot configured or not", async () => {
+    for (const config of [{}, { hubspot, posthog }]) {
+      const person = await handleLead(json(signup), deps(config));
+      const d = deps(config);
+      const response = await handleLead(json(bot), d);
+
+      expect(response.status).toBe(person.status);
+      expect(await response.json()).toEqual(await person.json());
+      expect(d.submit).not.toHaveBeenCalled();
+      expect(d.record).not.toHaveBeenCalled();
+    }
   });
 });
 
@@ -114,6 +116,37 @@ describe("handleLead — HubSpot and PostHog configured", () => {
     );
     expect(d.record).toHaveBeenCalledWith(
       expect.objectContaining({ event: "Lead Created", distinctId: "anon-1" }),
+      posthog,
+    );
+  });
+
+  it("records HubSpot's page as the endpoint when the Referer is malformed or another site's", async () => {
+    for (const referer of ["garbage", "https://evil.example/landing"]) {
+      const d = deps({ hubspot });
+      const response = await handleLead(
+        new Request(endpoint, {
+          method: "POST",
+          headers: { "content-type": "application/json", referer },
+          body: JSON.stringify(signup),
+        }),
+        d,
+      );
+
+      expect(response.status).toBe(200);
+      expect(d.submit).toHaveBeenCalledWith(expect.anything(), hubspot, {
+        pageUri: endpoint,
+        pageName: "/api/lead",
+      });
+    }
+  });
+
+  it("tags the conversion with the deployment environment", async () => {
+    const d = deps({ hubspot, posthog, environment: "preview" });
+    await handleLead(json(signup), d);
+    expect(d.record).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({ environment: "preview" }),
+      }),
       posthog,
     );
   });
