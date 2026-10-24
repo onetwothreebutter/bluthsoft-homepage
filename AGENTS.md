@@ -12,5 +12,6 @@ BluthSoft's marketing homepage: Astro (static, plus one on-demand route), Tailwi
 - **Product mockups are drawings:** one `role="img"` with an `aria-label` summary, contents `aria-hidden`, no focusable buttons inside.
 - **Links to pages that don't exist yet use real paths** (`/pricing`), which land on the 404 page; never `href="#"`. Add a page to `builtPaths` in `src/lib/links.ts` when it ships, or its links keep recording `Link Clicked`.
 - **Layout follows the two Figma frames:** phone (375) and desktop (1440). Display type, ledes and the side padding (`page-gutter`) are fluid between them; other sizes switch at a breakpoint.
+- **Browser tests run against the stub.** `playwright.config.ts` blanks the HubSpot and PostHog variables for its own server; keep it that way, or a local `.env` turns a test run into real contacts and events.
 - **Before pushing:** `pnpm check && pnpm format:check && pnpm test && pnpm build && pnpm test:e2e`.
 - **Record decisions** (and AI suggestions that were turned down) in `DECISIONS.md` as they happen.
