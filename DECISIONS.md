@@ -50,6 +50,11 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **`/privacy` is real,** because the forms collect email addresses and the site records sessions.
 - **Product mockups are HTML/CSS, not images:** sharp at any size, light, and they keep the headline as the first thing to render. Each reads to screen readers as one labelled illustration, and the buttons drawn inside them aren't focusable.
 - **Mobile is designed before it's built:** a 375px frame in Figma covering every section plus the open phone menu, reviewed before implementation. In-between widths are handled in code and checked at 768 and 1024px. The phone nav keeps the logo and Start free visible, with a menu for the rest.
+- **Sizes between the two frames are interpolated, not invented.** Display type, ledes and side padding are exactly the phone frame's at 375px and the desktop frame's at 1440px, on a straight line between, so 768 and 1024 aren't guesses at a third design.
+- **The hero is two columns from 1024px.** Stacked, a 1024 screen showed the copy and card side by side with half the width empty. The product card lays out by its own width rather than the screen's, so the narrower two-column card uses the phone frame's sizes.
+- **Headline type uses Bricolage's automatic optical size.** The scaffold pinned it to 14 because that's what Figma's code export lists; measured against Figma's own render, the pinned version set the hero headline about 9% wider and rewrapped it onto four lines on phones.
+- **The phone menu is a popover:** it opens and closes (and Escape closes it) without JavaScript. With JavaScript it behaves like a dialog: the page behind can't be reached and doesn't scroll, and choosing a link closes it.
+- **The header and footer have one copy each** (`src/content/navigation.ts`), and their section links are written `/#product` so they work from every page.
 - **Search:** production is indexable, with a sitemap, robots.txt, canonical URLs pointing at production (also from previews), and `Organization` + `SoftwareApplication` structured data on the homepage only (it describes the company and product, so other pages mustn't lend it their wording). Pages marked `noindex` carry no canonical link.
 
 ### AI suggestions I decided against

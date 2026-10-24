@@ -1,0 +1,70 @@
+---
+import { home } from "../content/home";
+import { trackCta } from "../lib/links";
+
+// The two outline rings are decoration, drawn at different sizes in the
+// mobile and desktop frames, so each layout gets its own pair.
+
+const { finalCta } = home;
+const button = "rounded-tile border px-6.5 py-4 text-[16px] transition-colors";
+---
+
+<section
+  data-section="final-cta"
+  class="page-gutter relative overflow-hidden border-y border-ink bg-banana py-14 text-center lg:py-24"
+>
+  <img
+    src="/images/cta-ring-sm-mobile.svg"
+    width="110"
+    height="110"
+    alt=""
+    class="absolute -top-10.25 -left-7.5 lg:hidden"
+  />
+  <img
+    src="/images/cta-ring-lg-mobile.svg"
+    width="180"
+    height="180"
+    alt=""
+    class="absolute -right-12.5 -bottom-38.75 lg:hidden"
+  />
+  <img
+    src="/images/cta-ring-sm.svg"
+    width="150"
+    height="150"
+    alt=""
+    class="absolute -top-10.25 -left-7.5 hidden lg:block"
+  />
+  <img
+    src="/images/cta-ring-lg.svg"
+    width="240"
+    height="240"
+    alt=""
+    class="absolute right-15 -bottom-54.5 hidden lg:block"
+  />
+
+  <div class="relative mx-auto flex max-w-page flex-col items-center">
+    <h2 class="font-display text-display-lg font-bold">{finalCta.heading}</h2>
+    <p class="mt-4.5 max-w-130 text-[17px] text-ink/75 lg:text-[19px]">
+      {finalCta.lede}
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href={finalCta.primary.href}
+        class:list={[
+          button,
+          "border-ink bg-ink font-semibold text-cream hover:bg-ink/85",
+        ]}
+        {...trackCta("final-cta")}
+      >
+        {finalCta.primary.label}
+      </a>
+      <a
+        href={finalCta.secondary.href}
+        class:list={[button, "border-ink/35 font-medium hover:border-ink"]}
+        {...trackCta("final-cta")}
+      >
+        {finalCta.secondary.label}
+      </a>
+    </div>
+  </div>
+</section>

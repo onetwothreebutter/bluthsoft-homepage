@@ -1,0 +1,20 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="97" height="17" viewBox="0 0 97 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Stars" clip-path="url(#clip0_0_4)">
+<path id="Star" d="M8.5 0L10.4985 5.74934L16.584 5.87336L11.7336 9.55066L13.4962 15.3766L8.5 11.9L3.50383 15.3766L5.26641 9.55066L0.416019 5.87336L6.50153 5.74934L8.5 0Z" fill="#FFC736"/>
+<path id="Star_2" d="M28.5 0L30.4985 5.74934L36.584 5.87336L31.7336 9.55066L33.4962 15.3766L28.5 11.9L23.5038 15.3766L25.2664 9.55066L20.416 5.87336L26.5015 5.74934L28.5 0Z" fill="#FFC736"/>
+<path id="Star_3" d="M48.5 0L50.4985 5.74934L56.584 5.87336L51.7336 9.55066L53.4962 15.3766L48.5 11.9L43.5038 15.3766L45.2664 9.55066L40.416 5.87336L46.5015 5.74934L48.5 0Z" fill="#FFC736"/>
+<path id="Star_4" d="M68.5 0L70.4985 5.74934L76.584 5.87336L71.7336 9.55066L73.4962 15.3766L68.5 11.9L63.5038 15.3766L65.2664 9.55066L60.416 5.87336L66.5015 5.74934L68.5 0Z" fill="#FFC736"/>
+<path id="Star_5" d="M88.5 0L90.4985 5.74934L96.584 5.87336L91.7336 9.55066L93.4962 15.3766L88.5 11.9L83.5038 15.3766L85.2664 9.55066L80.416 5.87336L86.5015 5.74934L88.5 0Z" fill="url(#paint0_linear_0_4)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_4" x1="80" y1="8.5" x2="97" y2="8.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFC736"/>
+<stop offset="0.88" stop-color="#FFC736"/>
+<stop offset="0.881" stop-color="#16150F" stop-opacity="0.14"/>
+<stop offset="1" stop-color="#16150F" stop-opacity="0.14"/>
+</linearGradient>
+<clipPath id="clip0_0_4">
+<rect width="97" height="17" fill="white"/>
+</clipPath>
+</defs>
+</svg>

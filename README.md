@@ -53,8 +53,8 @@ Copy `.env.example` to `.env` to set variables locally. Everything runs without 
 | `CTA Clicked`    | A call to action is clicked                              | `location`, `label`, `destination`                          | Which CTA, in which section, gets clicked?      |
 | `Link Clicked`   | A link to a page that doesn't exist yet is clicked       | `location`, `label`, `destination`                          | Which missing page do visitors want most?       |
 | `Section Viewed` | A section's top passes 60% down the viewport (once each) | `section`                                                   | How far down the page do people get?            |
-| `Form Started`   | TODO (signup flow PR)                                    |                                                             | Does the form attract attempts?                 |
-| `Form Submitted` | TODO (signup flow PR)                                    |                                                             | Where do attempts drop off?                     |
+| `Form Started`   | A visitor first types into a form                        | `form` (`hero`, …)                                          | Does the form attract attempts?                 |
+| `Form Submitted` | A form passes the browser's checks and is sent           | `form`                                                      | Where do attempts drop off?                     |
 | `Form Error`     | TODO (signup flow PR)                                    |                                                             | Which field trips people up?                    |
 | `Lead Created`   | The server accepted a signup (server-side)               | `intent`, `source`, `stands`, `sells`, `referrer`, UTM tags | How many signups, from which form and campaign? |
 | `Demo Requested` | The server accepted a demo request (server-side)         | `intent`, `source`, `stands`, `sells`, `referrer`, UTM tags | How many sales conversations?                   |
@@ -63,8 +63,8 @@ Every event also carries `environment` (`production`, `preview` or `development`
 
 ## Tests
 
-- **Unit (Vitest):** lead validation, the honeypot, stub mode, HubSpot field mapping, error handling and timeout, the conversion event, UTM parsing, the analytics wrapper (a no-op without a key; replays early calls once loaded; stops queueing if PostHog can't load), and the page-level click and section listeners (in happy-dom).
-- **Browser (Playwright):** the page's search tags and structured data, `robots.txt`, and the lead endpoint, including a form posted without JavaScript.
+- **Unit (Vitest):** lead validation, the honeypot, stub mode, HubSpot field mapping, error handling and timeout, the conversion event, UTM parsing, the analytics wrapper (a no-op without a key; replays early calls once loaded; stops queueing if PostHog can't load), the page-level click and section listeners and the form events (in happy-dom), and which links count as unbuilt pages.
+- **Browser (Playwright):** the page's search tags and structured data, `robots.txt`, the lead endpoint, the hero form posted without JavaScript, the phone menu, the 404 page and `/privacy`.
 
 ## Time spent
 

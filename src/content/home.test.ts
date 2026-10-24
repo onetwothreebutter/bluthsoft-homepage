@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { home, standsValues } from "./home";
+import { footer, header } from "./navigation";
+import { notFound, privacy, thanks } from "./pages";
 
 function collectHrefs(value: unknown, hrefs: string[] = []): string[] {
   if (Array.isArray(value)) value.forEach((item) => collectHrefs(item, hrefs));
@@ -13,10 +15,17 @@ function collectHrefs(value: unknown, hrefs: string[] = []): string[] {
 }
 
 describe("home content", () => {
-  it("only links to in-page anchors or same-site paths", () => {
-    const hrefs = collectHrefs(home);
+  it("only links to homepage sections or same-site paths", () => {
+    const hrefs = collectHrefs([
+      home,
+      header,
+      footer,
+      notFound,
+      thanks,
+      privacy,
+    ]);
     expect(hrefs.length).toBeGreaterThan(0);
-    for (const href of hrefs) expect(href).toMatch(/^(#[a-z-]+|\/[a-z-]*)$/);
+    for (const href of hrefs) expect(href).toMatch(/^\/(#[a-z-]+|[a-z-]*)$/);
   });
 
   it("offers every stand-count answer the lead endpoint accepts, once each", () => {

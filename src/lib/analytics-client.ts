@@ -11,6 +11,7 @@ import {
   createAnalytics,
   observeSections,
 } from "./analytics";
+import { bindLeadForms } from "./lead-form";
 
 export const analytics = createAnalytics({
   key: PUBLIC_POSTHOG_KEY,
@@ -23,3 +24,4 @@ export const analytics = createAnalytics({
 analytics.page();
 bindClickTracking(document, analytics);
 observeSections(document, analytics);
+bindLeadForms(document, analytics);
