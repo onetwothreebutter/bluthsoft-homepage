@@ -65,3 +65,21 @@ test("the privacy page is published and indexable", async ({ page }) => {
   );
   await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
+
+test("the product tabs switch panels by click and by keyboard", async ({
+  page,
+}) => {
+  await page.goto("/#product");
+  const [inventory, sales, ai] = home.product.panels;
+  const tab = (name: string) => page.getByRole("tab", { name });
+  const panel = (name: string) => page.getByRole("tabpanel", { name });
+
+  await expect(panel(inventory.tab)).toBeVisible();
+  await tab(sales.tab).click();
+  await expect(panel(sales.tab)).toBeVisible();
+  await expect(panel(inventory.tab)).toBeHidden();
+
+  await page.keyboard.press("ArrowRight");
+  await expect(tab(ai.tab)).toBeFocused();
+  await expect(panel(ai.tab)).toBeVisible();
+});

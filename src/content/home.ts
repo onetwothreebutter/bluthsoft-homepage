@@ -24,6 +24,28 @@ export const sellsValues = [
 ] as const;
 export type Sells = (typeof sellsValues)[number];
 
+export type Tone = "ok" | "warning" | "alert";
+
+export interface ProductPanel {
+  tab: string;
+  summary: string;
+  title: string;
+  meta: string;
+  columns: readonly string[];
+  rows: readonly {
+    item: string;
+    values: readonly string[];
+    status: { label: string; tone: Tone };
+  }[];
+  action: string;
+  why: {
+    label: string;
+    heading: string;
+    body: string;
+    stats: readonly { value: string; label: string }[];
+  };
+}
+
 export const home = {
   // New copy (not in the design): the document title and meta description.
   meta: {
@@ -120,53 +142,144 @@ export const home = {
     eyebrow: "ONE PLATFORM",
     heading: "Everything the stand needs, in one place.",
     lede: "Stop running the stand out of a cash box and a notebook. Inventory, staffing, and forecasting share the same numbers, so what you see is what’s actually happening.",
-    // Only the Inventory panel is designed. The plan replaces Staff and
-    // Forecast with Sales and Bluth AI panels in the same layout (new copy,
-    // added with the tabs section).
-    tabs: ["Inventory", "Staff", "Forecast"],
     syncStatus: "SYNCED 12s AGO",
-    inventory: {
-      title: "Stock on hand",
-      meta: "4 items below par",
-      columns: ["ITEM", "ON HAND", "PAR", "STATUS"],
-      rows: [
-        {
-          item: "Bananas, ripe",
-          onHand: "126",
-          par: "300",
-          status: "Below par",
+    // New copy: names the tab list for screen readers.
+    tabsLabel: "Product areas",
+    // The design's tabs were Inventory · Staff · Forecast, with only Inventory
+    // drawn. They're Inventory · Sales · Bluth AI (see DECISIONS.md); the
+    // Inventory panel is verbatim, the other two are new copy in its layout.
+    // Each row is the item, then the middle columns, then a status pill. On
+    // phones only the first middle column shows, as drawn (Par is hidden).
+    panels: [
+      {
+        tab: "Inventory",
+        // New copy: what screen readers hear for the table drawing.
+        summary:
+          "Stock on hand: ripe bananas 126 of 300, below par; frozen bananas 41 of 120, reorder now; chocolate dip 18 of 12 pounds, healthy; chopped nuts 9 of 10 pounds, below par; 12-ounce cups 640 of 400, healthy.",
+        title: "Stock on hand",
+        meta: "4 items below par",
+        columns: ["ITEM", "ON HAND", "PAR", "STATUS"],
+        rows: [
+          {
+            item: "Bananas, ripe",
+            values: ["126", "300"],
+            status: { label: "Below par", tone: "warning" },
+          },
+          {
+            item: "Frozen bananas",
+            values: ["41", "120"],
+            status: { label: "Reorder now", tone: "alert" },
+          },
+          {
+            item: "Chocolate dip",
+            values: ["18 lb", "12 lb"],
+            status: { label: "Healthy", tone: "ok" },
+          },
+          {
+            item: "Nuts, chopped",
+            values: ["9 lb", "10 lb"],
+            status: { label: "Below par", tone: "warning" },
+          },
+          {
+            item: "Cups, 12 oz",
+            values: ["640", "400"],
+            status: { label: "Healthy", tone: "ok" },
+          },
+        ],
+        action: "Create restock order",
+        why: {
+          label: "WHY IT MATTERS",
+          heading: "You always know what you have.",
+          body: "Counts update on every sale and every delivery. Par levels tell BluthSoft when to act — no clipboard, no guessing at 4 PM.",
+          stats: [
+            { value: "31%", label: "less spoilage after 90 days" },
+            { value: "2 min", label: "average end-of-day close" },
+          ],
         },
-        {
-          item: "Frozen bananas",
-          onHand: "41",
-          par: "120",
-          status: "Reorder now",
+      },
+      {
+        // New copy: the whole panel. Revenue adds up to the hero card's $1,284.
+        tab: "Sales",
+        summary:
+          "Sales today, $1,284 so far: frozen bananas 214 sold for $856, up 24%; lemonade 96 for $240, up 12%; extra nuts 168 for $126, flat; chocolate dip 124 for $62, down 6%.",
+        title: "Sales today",
+        meta: "$1,284 so far",
+        columns: ["ITEM", "SOLD", "REVENUE", "VS. TUE"],
+        rows: [
+          {
+            item: "Frozen bananas",
+            values: ["214", "$856"],
+            status: { label: "↑ 24%", tone: "ok" },
+          },
+          {
+            item: "Lemonade",
+            values: ["96", "$240"],
+            status: { label: "↑ 12%", tone: "ok" },
+          },
+          {
+            item: "Nuts, extra",
+            values: ["168", "$126"],
+            status: { label: "Flat", tone: "warning" },
+          },
+          {
+            item: "Chocolate dip",
+            values: ["124", "$62"],
+            status: { label: "↓ 6%", tone: "alert" },
+          },
+        ],
+        action: "Open today’s report",
+        why: {
+          label: "WHY IT MATTERS",
+          heading: "You see the day while it’s happening.",
+          body: "Every sale lands here by item and by hour, so you can staff the rush and pull what isn’t moving before close, not after.",
+          stats: [
+            { value: "↑ 18%", label: "sales vs. last Tuesday" },
+            { value: "3 PM", label: "today’s busiest hour" },
+          ],
         },
-        {
-          item: "Chocolate dip",
-          onHand: "18 lb",
-          par: "12 lb",
-          status: "Healthy",
+      },
+      {
+        // New copy: the whole panel. The first suggestion is the hero card's.
+        tab: "Bluth AI",
+        summary:
+          "Bluth AI suggestions: order 300 frozen bananas by 3:40 PM, confidence 0.91, act now; add a second register Saturday 2 to 4 PM, 0.84, suggested; raise lemonade to $2.75 this week, 0.72, suggested; prep a third fewer nuts on weekdays, 0.88, applied.",
+        title: "Suggestions",
+        meta: "1 needs you today",
+        columns: ["SUGGESTION", "WHEN", "CONF.", "STATUS"],
+        rows: [
+          {
+            item: "Order 300 frozen bananas",
+            values: ["By 3:40 PM", "0.91"],
+            status: { label: "Act now", tone: "alert" },
+          },
+          {
+            item: "Second register, 2–4 PM",
+            values: ["Saturday", "0.84"],
+            status: { label: "Suggested", tone: "warning" },
+          },
+          {
+            item: "Lemonade to $2.75",
+            values: ["This week", "0.72"],
+            status: { label: "Suggested", tone: "warning" },
+          },
+          {
+            item: "Prep a third fewer nuts",
+            values: ["Weekdays", "0.88"],
+            status: { label: "Applied", tone: "ok" },
+          },
+        ],
+        action: "Review suggestions",
+        why: {
+          label: "WHY IT MATTERS",
+          heading: "It sees the problem before you do.",
+          body: "Bluth AI reads your sales, your stock and the weather, then tells you what’s coming and how sure it is. You decide what happens.",
+          stats: [
+            { value: "0.91", label: "confidence in today’s stockout call" },
+            { value: "94% → 6%", label: "stockout risk after one reorder" },
+          ],
         },
-        {
-          item: "Nuts, chopped",
-          onHand: "9 lb",
-          par: "10 lb",
-          status: "Below par",
-        },
-        { item: "Cups, 12 oz", onHand: "640", par: "400", status: "Healthy" },
-      ],
-      action: "Create restock order",
-    },
-    whyItMatters: {
-      label: "WHY IT MATTERS",
-      heading: "You always know what you have.",
-      body: "Counts update on every sale and every delivery. Par levels tell BluthSoft when to act — no clipboard, no guessing at 4 PM.",
-      stats: [
-        { value: "31%", label: "less spoilage after 90 days" },
-        { value: "2 min", label: "average end-of-day close" },
-      ],
-    },
+      },
+    ] satisfies readonly ProductPanel[],
   },
 
   automation: {
