@@ -1,0 +1,89 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute or root-relative URL of the social preview image, once one exists. */
+  image?: string;
+  /** For pages that should never be indexed (404, form confirmations). */
+  noindex?: boolean;
+}
+
+const { title, description, image, noindex = false } = Astro.props;
+
+// `site` is always set in astro.config.mjs, so canonical URLs are absolute and
+// point at production even on preview deployments.
+const site = Astro.site!;
+const canonical = new URL(Astro.url.pathname, site).href;
+const imageUrl = image ? new URL(image, site).href : undefined;
+
+const organization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "BluthSoft",
+  url: site.href,
+  description: "The operating platform for banana stands.",
+};
+
+// No aggregateRating: rating markup is meant to describe reviews the page
+// shows, and this page shows one testimonial, not 318 reviews.
+const application = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "BluthSoft",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  url: site.href,
+  description,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+    description: "Free for one stand.",
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BluthSoft" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta
+      name="twitter:card"
+      content={imageUrl ? "summary_large_image" : "summary"}
+    />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify([organization, application])}
+    />
+  </head>
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only">
+      Skip to content
+    </a>
+    <slot name="header" />
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

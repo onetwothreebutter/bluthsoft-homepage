@@ -1,0 +1,86 @@
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+@import "@fontsource-variable/schibsted-grotesk/wght.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "tailwindcss";
+
+/*
+ * Design tokens, read from the Figma file's design context (the file defines
+ * no Figma variables, so these are the literal values the frames use).
+ * Opacity steps (ink at 72%, cream at 55%, …) are not tokens of their own:
+ * use Tailwind's modifier on the base colour, e.g. `text-ink/72`.
+ */
+@theme {
+  /* Colour */
+  --color-ink: #16150f;
+  --color-cream: #fbf7ee;
+  --color-sand: #f4efe2;
+  --color-banana: #ffc736;
+  --color-forest: #123a2e;
+
+  /* Status: text on light, and its tinted background */
+  --color-healthy: #1f7a4a;
+  --color-healthy-bg: rgb(31 157 87 / 0.14);
+  --color-below-par: #8a6a12;
+  --color-below-par-bg: rgb(255 199 54 / 0.3);
+  --color-reorder: #b4601a;
+  --color-reorder-bg: rgb(180 96 26 / 0.16);
+  /* Status on the forest background (automation card) */
+  --color-healthy-on-dark: #7de0a6;
+  --color-healthy-on-dark-bg: rgb(31 157 87 / 0.18);
+
+  /* Type */
+  --font-display:
+    "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Figma pins the optical size at 14 for every size; without this the
+     browser's auto optical sizing renders large headings noticeably thinner. */
+  --font-display--font-variation-settings: "opsz" 14, "wdth" 100;
+  --font-sans:
+    "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-display-xl: 72px;
+  --text-display-xl--line-height: 0.98;
+  --text-display-xl--letter-spacing: -0.035em;
+  --text-display-lg: 64px;
+  --text-display-lg--line-height: 1;
+  --text-display-lg--letter-spacing: -0.04em;
+  --text-display-md: 52px;
+  --text-display-md--line-height: 1.02;
+  --text-display-md--letter-spacing: -0.032em;
+  --text-display-sm: 44px;
+  --text-display-sm--line-height: 1.04;
+  --text-display-sm--letter-spacing: -0.032em;
+  --text-lede: 19px;
+  --text-lede--line-height: 1.55;
+  --text-label: 11px;
+  --text-label--letter-spacing: 0.09em;
+
+  /* Radius */
+  --radius-chip: 9px;
+  --radius-button: 12px;
+  --radius-tile: 14px;
+  --radius-panel: 16px;
+  --radius-card: 22px;
+  --radius-card-lg: 24px;
+  --radius-section: 28px;
+
+  /* Shadow */
+  --shadow-press: 0 3px 0 0 var(--color-ink);
+  --shadow-field: 0 2px 0 0 rgb(22 21 15 / 0.06);
+  --shadow-float: 0 12px 30px 0 rgb(22 21 15 / 0.1);
+  --shadow-card:
+    0 28px 60px 0 rgb(22 21 15 / 0.1), 0 8px 18px 0 rgb(22 21 15 / 0.06),
+    0 1px 1px 0 rgb(22 21 15 / 0.04);
+
+  /* Layout: 1280px of content inside the 1440px frame's 80px gutters */
+  --container-page: 1280px;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
