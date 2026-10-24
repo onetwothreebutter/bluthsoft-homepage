@@ -48,6 +48,11 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **Fixing the contradictions in the supplied copy** (below). Left as designed and noted here instead.
 - **Inventing the mobile reflow in code.** I had the mobile layout drawn in Figma first so I could adjust it before anything was built.
 
+## Open questions
+
+- **Where the hero product card sits on phones.** The mobile layout keeps it after the email form and rating, so signup is reachable without much scrolling. Moving it up to right after the subheading would lead with the product, but pushes the email form about 1,000px down the page, below the first screen on any phone. A sticky nav that keeps Start free visible would soften that.
+- **A scrolling marquee for the "Running on BluthSoft" strip on phones** — one row of names looping instead of three wrapped rows. If it ships, it needs a way to stop it (a pause button, or one pass and then stop; WCAG 2.2.2), the repeated names hidden from screen readers, and a still, swipeable row when the device asks for reduced motion.
+
 ## Noticed in the supplied design, left as-is
 
 1. The inventory panel says "4 items below par", but the table flags 3.
