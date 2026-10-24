@@ -63,5 +63,8 @@ const imageUrl = image ? new URL(image, origin).href : undefined;
       <slot />
     </main>
     <slot name="footer" />
+    <script>
+      import "../lib/analytics-client";
+    </script>
   </body>
 </html>
