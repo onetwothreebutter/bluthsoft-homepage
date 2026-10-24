@@ -68,7 +68,7 @@ Every event also carries `environment` (`production`, `preview` or `development`
 ## Tests
 
 - **Unit (Vitest):** lead validation, the honeypot, stub mode, HubSpot field mapping, error handling and timeout, the conversion event, UTM parsing, the analytics wrapper (a no-op without a key; replays early calls once loaded; stops queueing if PostHog can't load), the page-level click, tab and section listeners and the form events (in happy-dom), which links count as unbuilt pages, the product tabs (click, arrow keys, Home and End), the `/demo` hand-off, and the setup questions (step by step, skipping the email the hero already took, "More than 20" to `/demo`, server errors).
-- **Browser (Playwright):** the page's search tags and structured data, `robots.txt`, the lead endpoint, the phone menu, the product tabs, the 404 page and `/privacy`, and every signup path: the setup questions, a hero signup carried into them, "More than 20" arriving at `/demo` with the answer filled in, the demo form, and both forms posted without JavaScript.
+- **Browser (Playwright):** the page's search tags and structured data, `robots.txt`, the lead endpoint, the phone menu, the product tabs, every in-page link having a section to land on, the 404 page and `/privacy`, and every signup path: the setup questions, a hero signup carried into them, "More than 20" arriving at `/demo` with the answer filled in, the demo form, and both forms posted without JavaScript.
 - **Browser tests never reach HubSpot or PostHog:** `playwright.config.ts` starts its own server with those keys blanked, so a local `.env` can't turn a test run into real contacts.
 
 ## Time spent

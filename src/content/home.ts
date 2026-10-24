@@ -292,6 +292,9 @@ export const home = {
     ],
     cta: { label: "Build your first rule", href: anchors.getStarted },
     rule: {
+      // New copy: what screen readers hear for the rule card drawing.
+      summary:
+        "Rule “Low frozen stock”, active. When banana inventory is below 150 units: supplier order PO-4417 for 300 units from Pier Fruit Co., done; George Michael texted to sign for the 6:15 PM delivery, done; forecast updated, stockout risk 94% to 6%, done; inventory reconciled on the delivery scan, waiting. Last run 3:41 PM.",
       label: "RULE · LOW FROZEN STOCK",
       status: "Active",
       when: {
@@ -332,6 +335,8 @@ export const home = {
   },
 
   proof: {
+    // New copy: the section's heading for screen readers (it has no visible one).
+    label: "What operators say",
     rating: { score: "4.9 / 5", count: "· 318 reviews" },
     press: ["STANDREVIEW", "FRUITWARE WEEKLY", "SMB OPS AWARDS ’26"],
     // `fill` is the bar under each metric as drawn in the design (0–1).
@@ -356,6 +361,9 @@ export const home = {
       more: "+ 1,380 more",
     },
     receipt: {
+      // New copy: what screen readers hear for the receipt drawing.
+      summary:
+        "A Bluth Banana Stand receipt from Balboa Island: two frozen bananas, extra nuts, two chocolate dips and a lemonade, $12.25, paid by tap at 15:41.",
       store: "BLUTH BANANA STAND",
       terminal: "BALBOA ISLAND · TERM 02",
       lines: [

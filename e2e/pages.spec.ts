@@ -88,3 +88,16 @@ test("the product tabs switch panels by click and by keyboard", async ({
   await page.keyboard.press("Tab");
   await expect(panel(ai.tab)).toBeFocused();
 });
+
+test("every in-page link on the homepage has somewhere to land", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const targets = await page
+    .locator('a[href^="/#"]')
+    .evaluateAll((links) => [
+      ...new Set(links.map((link) => link.getAttribute("href")!.slice(2))),
+    ]);
+  expect(targets.length).toBeGreaterThan(0);
+  for (const id of targets) await expect(page.locator(`#${id}`)).toHaveCount(1);
+});
