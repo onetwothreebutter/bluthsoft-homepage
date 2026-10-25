@@ -70,12 +70,13 @@ Every event also carries `environment` (`production`, `preview` or `development`
 
 I had a 6-hour budget, split across two sittings.
 
-| Sitting | Date       | Time      | Covered                                                                                                                                                                                |
-| ------- | ---------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1       | 2026-10-24 | 2.5 hours | Planning, the phone layout in Figma and its review, the build (scaffold, analytics and lead endpoint, every section, the setup questions, `/demo`), and setting up HubSpot and PostHog |
-| 2       | 2026-10-25 | 2 hours   | Reviewing and merging the build: review fixes (attribution on the way to `/demo`, keyboard tab tracking, focus on the product panels and on forest) and the hero card's load animation |
+| Sitting | Date       | Time       | Covered                                                                                                                                                                                |
+| ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1       | 2026-10-24 | 2.5 hours  | Planning, the phone layout in Figma and its review, the build (scaffold, analytics and lead endpoint, every section, the setup questions, `/demo`), and setting up HubSpot and PostHog |
+| 2       | 2026-10-25 | 2 hours    | Reviewing and merging the build: review fixes (attribution on the way to `/demo`, keyboard tab tracking, focus on the product panels and on forest) and the hero card's load animation |
+| Wrap-up | 2026-10-25 | 15 minutes | Recording another take of the Loom, and cleaning up the README PR                                                                                                                      |
 
-**That's 4.5 of 6 hours.** I counted setting up HubSpot and PostHog, even though my plan left account setup out of the budget, so the number leans high. Sitting 2 is wall-clock time (5:35 to 7:30 AM, rounded up). The hero animation was built in a second Claude Code session during that same window, so it isn't counted twice. The budget also covers the Loom walkthrough, which I recorded separately.
+**That's 4.75 of 6 hours.** I counted setting up HubSpot and PostHog, even though my plan left account setup out of the budget, so the number leans high. Sitting 2 is wall-clock time (5:35 to 7:30 AM, rounded up). The hero animation was built in a second Claude Code session during that same window, so it isn't counted twice. The wrap-up came later that day, separate from sitting 2.
 
 ## What's next
 
