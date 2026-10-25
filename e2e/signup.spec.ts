@@ -62,6 +62,39 @@ test("more than 20 stands goes to /demo with the answer filled in", async ({
   await expect(page.getByLabel(demo.form.stands)).toHaveValue("20+");
 });
 
+test("Book a demo carries the visit's campaign and referrer, and the link stays plain", async ({
+  page,
+  context,
+}) => {
+  // Another site's own `ref` tag, which isn't a hand-off, plus its real referrer.
+  await page.goto("/?ref=producthunt&utm_source=ph", {
+    referer: "https://www.producthunt.com/",
+  });
+  const link = page.getByRole("link", { name: home.finalCta.secondary.label });
+  const demoRequest = () =>
+    context.waitForEvent(
+      "request",
+      (request) => new URL(request.url()).pathname === "/demo",
+    );
+  const expectCarried = (url: string) => {
+    const params = new URL(url).searchParams;
+    expect(params.get("utm_source")).toBe("ph");
+    expect(params.get("bs_ref")).toBe("https://www.producthunt.com/");
+  };
+
+  // A middle-click opens a tab and this page stays open, so the link has to
+  // go back to its plain href once the tab has the hand-off.
+  const tab = demoRequest();
+  await link.click({ button: "middle" });
+  expectCarried((await tab).url());
+  await expect(link).toHaveAttribute("href", "/demo");
+
+  const followed = demoRequest();
+  await link.click();
+  expectCarried((await followed).url());
+  await expect(page).toHaveURL(/\/demo$/);
+});
+
 test("the demo form books a demo", async ({ page }) => {
   await page.goto("/demo");
   await page.getByLabel(demo.form.name).fill("Lucille Bluth");

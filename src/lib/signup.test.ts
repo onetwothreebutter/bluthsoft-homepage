@@ -197,8 +197,8 @@ describe("enhanceSetupForm", () => {
 
     const url = new URL(navigate.mock.calls[0][0], "https://bluthsoft.test");
     expect(url.pathname).toBe("/demo");
-    expect(url.searchParams.get("stands")).toBe("20+");
-    expect(url.searchParams.get("vid")).toBeTruthy();
+    expect(url.searchParams.get("bs_stands")).toBe("20+");
+    expect(url.searchParams.get("bs_vid")).toBeTruthy();
   });
 
   it("goes back to the email question when the server rejects it", async () => {
