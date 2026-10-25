@@ -1,5 +1,6 @@
 ---
 import { home } from "../content/home";
+import { splitWords } from "../lib/words";
 
 /*
  * The hero's product card: a drawing, not an interface. Screen readers get
@@ -11,20 +12,22 @@ import { home } from "../content/home";
  * smaller numbers, which is a phone, or the narrower two-column layout
  * between 1024 and about 1280px.
  *
- * On load the three stats rise into place one after another, then the chart's
- * bars grow up from the baseline, left to right, then Bluth AI "thinks", its
- * reply streams in word by word, and its suggested actions follow. Then the
- * first action is "clicked" and the restock notice pops in (CSS only; still
- * when the visitor asks for reduced motion).
+ * When the card comes into view, the three stats rise into place one after
+ * another, then the chart's bars grow up from the baseline, left to right,
+ * then Bluth AI "thinks", its reply streams in word by word, and its
+ * suggested actions follow. Then, where the restock notice shows, the first
+ * action is "clicked" and the notice pops in. The timing is in global.css;
+ * the script below holds it until the card is in view. Still when the visitor
+ * asks for reduced motion.
  */
 
 const { dashboard } = home.hero;
 
-// Bluth AI's reply word by word (each keeps its trailing space), so the words
-// can stream in one after another like a reply being generated.
+// Bluth AI's reply word by word, so the words can stream in one after another
+// like a reply being generated. The count times the steps after the reply.
 const { message } = dashboard.assistant;
 const toWords = (text: string, emphasis = false) =>
-  text.split(/(?<=\s)/).map((word) => ({ word, emphasis }));
+  splitWords(text).map((word) => ({ word, emphasis }));
 const reply = [
   ...toWords(message.before),
   ...toWords(message.emphasis, true),
@@ -45,7 +48,12 @@ const barClass = {
 } as const;
 ---
 
-<div role="img" aria-label={dashboard.summary} class="@container relative">
+<div
+  role="img"
+  aria-label={dashboard.summary}
+  class="@container relative"
+  style={`--reply-words: ${reply.length}`}
+>
   <div
     aria-hidden="true"
     class="overflow-hidden rounded-card border border-ink/14 bg-white shadow-card"
@@ -138,7 +146,7 @@ const barClass = {
             class="motion-safe:animate-rise-in-after-reply"
             style="--stagger: 0"
           >
-            <span class="block rounded-[11px] border border-ink bg-banana px-3.5 py-[9px] text-[13.5px] font-semibold text-ink motion-safe:animate-press">
+            <span class="block rounded-[11px] border border-ink bg-banana px-3.5 py-[9px] text-[13.5px] font-semibold text-ink xl:motion-safe:animate-press">
               {dashboard.assistant.actions[0]}
             </span>
           </span>
@@ -172,3 +180,26 @@ const barClass = {
     </div>
   </div>
 </div>
+
+<script is:inline>
+  // Hold the card's animations until it's in view: on phones it sits below
+  // the email form, and the sequence would be over before anyone got there.
+  // data-motion="waiting" pauses them (global.css) until the card's top
+  // passes 70% of the way down the screen, which on desktop it already has
+  // at load. Inline, so the hold is on before they start; without JavaScript
+  // they play on load. The observer is made first so that if it can't be,
+  // the card is never held.
+  (() => {
+    const card = document.currentScript.previousElementSibling;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        delete card.dataset.motion;
+        observer.disconnect();
+      },
+      { rootMargin: "0px 0px -30% 0px" },
+    );
+    observer.observe(card);
+    card.dataset.motion = "waiting";
+  })();
+</script>

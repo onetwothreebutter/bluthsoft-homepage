@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { splitWords } from "../lib/words";
 import { home, standsValues } from "./home";
 import { footer, header } from "./navigation";
 import { notFound, privacy, thanks } from "./pages";
@@ -33,5 +34,19 @@ describe("home content", () => {
       (option) => option.value,
     );
     expect(values).toEqual([...standsValues]);
+  });
+
+  // The hero card's animation (global.css) is timed for 3 stats and 9 bars,
+  // and ends 5 seconds after it starts with a 12-word reply. Any longer and
+  // WCAG 2.2.2 would need a way to pause it, so retime it before changing
+  // these.
+  it("fits the hero card's animation", () => {
+    const { stats, chart, assistant } = home.hero.dashboard;
+    const { before, emphasis, after } = assistant.message;
+    expect(stats).toHaveLength(3);
+    expect(chart).toHaveLength(9);
+    expect(
+      [before, emphasis, after].flatMap(splitWords).length,
+    ).toBeLessThanOrEqual(12);
   });
 });
