@@ -2,9 +2,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   bindClickTracking,
+  bindTabTracking,
   observeSections,
   type Analytics,
 } from "./analytics";
+import { bindTabs } from "./tabs";
 
 function fakeAnalytics() {
   return {
@@ -59,6 +61,66 @@ describe("bindClickTracking", () => {
     document.querySelector("a")!.click();
 
     expect(analytics.track).not.toHaveBeenCalled();
+  });
+});
+
+describe("bindTabTracking", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  function renderTabs() {
+    document.body.innerHTML = `
+      <div role="tablist">
+        <button role="tab" data-location="product" aria-selected="true" tabindex="0">Inventory</button>
+        <button role="tab" data-location="product" aria-selected="false" tabindex="-1">Sales</button>
+        <button role="tab" data-location="product" aria-selected="false" tabindex="-1">Bluth AI</button>
+      </div>`;
+    bindTabs(document.querySelector<HTMLElement>('[role="tablist"]')!);
+    return [...document.querySelectorAll<HTMLElement>('[role="tab"]')];
+  }
+  const arrowRight = () =>
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+    );
+
+  it("records a tab chosen with the arrow keys once the visitor settles on it", () => {
+    const [inventory] = renderTabs();
+    const analytics = fakeAnalytics();
+    bindTabTracking(document, analytics);
+
+    inventory.focus();
+    arrowRight();
+    vi.advanceTimersByTime(300);
+    arrowRight();
+    vi.advanceTimersByTime(999);
+    expect(analytics.track).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1);
+    expect(analytics.track).toHaveBeenCalledOnce();
+    expect(analytics.track).toHaveBeenCalledWith("Tab Selected", {
+      location: "product",
+      label: "Bluth AI",
+    });
+  });
+
+  it("records a clicked tab, and nothing for clicking the one already shown", () => {
+    const [inventory, sales] = renderTabs();
+    const analytics = fakeAnalytics();
+    bindTabTracking(document, analytics);
+
+    inventory.click();
+    vi.runAllTimers();
+    expect(analytics.track).not.toHaveBeenCalled();
+
+    sales.click();
+    vi.runAllTimers();
+    sales.click();
+    vi.runAllTimers();
+    expect(analytics.track).toHaveBeenCalledOnce();
+    expect(analytics.track).toHaveBeenCalledWith("Tab Selected", {
+      location: "product",
+      label: "Sales",
+    });
   });
 });
 

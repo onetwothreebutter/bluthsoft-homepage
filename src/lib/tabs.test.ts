@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it } from "vitest";
-import { bindTabs } from "./tabs";
+import { bindTabs, tabSelectEvent } from "./tabs";
 
 function render() {
   document.body.innerHTML = `
@@ -62,5 +62,21 @@ describe("bindTabs", () => {
     expect(document.activeElement).toBe(ai);
     press("Home");
     expect(document.activeElement).toBe(inventory);
+  });
+
+  it("announces a change of tab, by click or by key, but not a click on the selected one", () => {
+    const [inventory, sales, ai] = render();
+    const announced: EventTarget[] = [];
+    const record = (event: Event) => announced.push(event.target!);
+    document.addEventListener(tabSelectEvent, record);
+
+    inventory.click();
+    sales.click();
+    sales.click();
+    sales.focus();
+    press("ArrowRight");
+
+    document.removeEventListener(tabSelectEvent, record);
+    expect(announced).toEqual([sales, ai]);
   });
 });

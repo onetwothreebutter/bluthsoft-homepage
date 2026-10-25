@@ -4,7 +4,8 @@ import ProductPanel from "./ProductPanel.astro";
 
 // "One platform": the heading, then a card of tabs. The tabs are real
 // controls (src/lib/tabs.ts); what's inside each panel is a drawing plus
-// real text. Clicks record `Tab Clicked` through the page-level listener.
+// real text. Choosing a tab, by click or by key, records `Tab Selected`
+// through the page-level listener.
 
 const { product } = home;
 ---
@@ -37,7 +38,6 @@ const { product } = home;
               aria-controls={`product-panel-${i}`}
               aria-selected={i === 0 ? "true" : "false"}
               tabindex={i === 0 ? 0 : -1}
-              data-track="Tab Clicked"
               data-location="product"
               class="rounded-[11px] px-4 py-2.5 text-[14.5px] font-medium whitespace-nowrap text-ink/68 transition-colors hover:text-ink aria-selected:bg-ink aria-selected:text-cream"
             >
@@ -56,7 +56,8 @@ const { product } = home;
           id={`product-panel-${i}`}
           aria-labelledby={`product-tab-${i}`}
           hidden={i !== 0}
-          class="lg:grid lg:grid-cols-[768fr_512fr]"
+          tabindex="0"
+          class="rounded-b-card-lg focus-visible:-outline-offset-2 lg:grid lg:grid-cols-[768fr_512fr]"
         >
           <ProductPanel panel={panel} />
         </div>

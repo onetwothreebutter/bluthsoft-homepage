@@ -5,19 +5,30 @@
  * `aria-controls`. The markup arrives with the first tab selected, so without
  * JavaScript the first panel still shows.
  */
+
+/**
+ * Fired (bubbling) on a tab when it becomes the selected one, by click or by
+ * key. Choosing the tab that's already selected changes nothing and fires
+ * nothing. The analytics listener records it; components don't track.
+ */
+export const tabSelectEvent = "tabs:select";
+
 export function bindTabs(tablist: HTMLElement): void {
   const tabs = [...tablist.querySelectorAll<HTMLElement>('[role="tab"]')];
   const document = tablist.ownerDocument;
 
   function select(tab: HTMLElement, focus: boolean) {
-    for (const each of tabs) {
-      const selected = each === tab;
-      each.setAttribute("aria-selected", String(selected));
-      each.tabIndex = selected ? 0 : -1;
-      const panel = document.getElementById(
-        each.getAttribute("aria-controls") ?? "",
-      );
-      if (panel) panel.hidden = !selected;
+    if (tab.getAttribute("aria-selected") !== "true") {
+      for (const each of tabs) {
+        const selected = each === tab;
+        each.setAttribute("aria-selected", String(selected));
+        each.tabIndex = selected ? 0 : -1;
+        const panel = document.getElementById(
+          each.getAttribute("aria-controls") ?? "",
+        );
+        if (panel) panel.hidden = !selected;
+      }
+      tab.dispatchEvent(new CustomEvent(tabSelectEvent, { bubbles: true }));
     }
     if (focus) tab.focus();
   }

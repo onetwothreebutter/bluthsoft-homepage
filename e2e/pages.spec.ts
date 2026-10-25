@@ -82,4 +82,9 @@ test("the product tabs switch panels by click and by keyboard", async ({
   await page.keyboard.press("ArrowRight");
   await expect(tab(ai.tab)).toBeFocused();
   await expect(panel(ai.tab)).toBeVisible();
+
+  // Nothing inside a panel can take focus, so the panel itself is the next
+  // stop: Tab lands there, not on the next section.
+  await page.keyboard.press("Tab");
+  await expect(panel(ai.tab)).toBeFocused();
 });

@@ -8,6 +8,7 @@ import {
 } from "astro:env/client";
 import {
   bindClickTracking,
+  bindTabTracking,
   createAnalytics,
   observeSections,
 } from "./analytics";
@@ -32,6 +33,7 @@ export const analytics = createAnalytics({
 
 analytics.page();
 bindClickTracking(document, analytics);
+bindTabTracking(document, analytics);
 observeSections(document, analytics);
 bindLeadForms(document, analytics);
 bindHandoffLinks(document, analytics);
