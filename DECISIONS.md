@@ -63,6 +63,7 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **The phone menu is a popover:** it opens and closes (and Escape closes it) without JavaScript. With JavaScript it behaves like a dialog: the page behind can't be reached and doesn't scroll, and choosing a link closes it.
 - **The header and footer have one copy each** (`src/content/navigation.ts`), and their section links are written `/#product` so they work from every page.
 - **Search:** production is indexable, with a sitemap, robots.txt, canonical URLs pointing at production (also from previews), and `Organization` + `SoftwareApplication` structured data on the homepage only (it describes the company and product, so other pages mustn't lend it their wording). Pages marked `noindex` carry no canonical link.
+- **The hero's three stats rise into place on load,** one after another, then the chart's bars grow up from the baseline, left to right. Then Bluth AI "thinks" (three pulsing dots) for about a second and its reply streams in word by word, since in the product that line is generated; its suggested actions rise in once the reply is complete. Then "Order 300 bananas" is pressed and the "Restock created" notice pops in, so the card tells the whole story from prediction to order. All finished in about 5 seconds. It's CSS only, so it costs no JavaScript and runs without it, and visitors who ask for reduced motion see the stats still.
 
 ### AI suggestions I decided against
 
