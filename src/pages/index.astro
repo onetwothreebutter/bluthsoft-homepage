@@ -2,7 +2,9 @@
 import FinalCta from "../components/FinalCta.astro";
 import GetStarted from "../components/GetStarted.astro";
 import Hero from "../components/Hero.astro";
+import ProductStory from "../components/ProductStory.astro";
 import StructuredData from "../components/StructuredData.astro";
+import TrustStrip from "../components/TrustStrip.astro";
 import { home } from "../content/home";
 import Page from "../layouts/Page.astro";
 ---
@@ -10,6 +12,8 @@ import Page from "../layouts/Page.astro";
 <Page title={home.meta.title} description={home.meta.description}>
   <StructuredData slot="head" description={home.meta.description} />
   <Hero />
+  <TrustStrip />
+  <ProductStory />
   <GetStarted />
   <FinalCta />
 </Page>

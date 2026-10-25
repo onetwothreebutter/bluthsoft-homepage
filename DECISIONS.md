@@ -56,6 +56,8 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **Sizes between the two frames are interpolated, not invented.** Display type, ledes and side padding are exactly the phone frame's at 375px and the desktop frame's at 1440px, on a straight line between, so 768 and 1024 aren't guesses at a third design.
 - **The hero is two columns from 1024px.** Stacked, a 1024 screen showed the copy and card side by side with half the width empty. The product card lays out by its own width rather than the screen's, so the narrower two-column card uses the phone frame's sizes.
 - **Headline type uses Bricolage's automatic optical size.** The scaffold pinned it to 14 because that's what Figma's code export lists; measured against Figma's own render, the pinned version set the hero headline about 9% wider and rewrapped it onto four lines on phones.
+- **The Sales and Bluth AI tabs reuse the Inventory panel's layout** with new copy whose numbers agree with the hero card: Sales adds up to its $1,284 and repeats its "↑ 18% vs. Tue"; Bluth AI's first suggestion is its 3:40 PM frozen-banana order. The tabs are real, keyboard-operable controls; each panel's table is a labelled drawing, and "Why it matters" beside it is real text.
+- **The trust strip wraps instead of clipping.** The desktop frame clips the names to one row; between 1024 and 1440 that would cut names in half, so the label moves above them and the gap between names scales from the phone frame's to the desktop frame's.
 - **The phone menu is a popover:** it opens and closes (and Escape closes it) without JavaScript. With JavaScript it behaves like a dialog: the page behind can't be reached and doesn't scroll, and choosing a link closes it.
 - **The header and footer have one copy each** (`src/content/navigation.ts`), and their section links are written `/#product` so they work from every page.
 - **Search:** production is indexable, with a sitemap, robots.txt, canonical URLs pointing at production (also from previews), and `Organization` + `SoftwareApplication` structured data on the homepage only (it describes the company and product, so other pages mustn't lend it their wording). Pages marked `noindex` carry no canonical link.
@@ -67,6 +69,8 @@ A running log of what was decided, why, and what was changed from the supplied d
 - **Inventing the mobile reflow in code.** I had the mobile layout drawn in Figma first so I could adjust it before anything was built.
 
 ## Open questions
+
+- **Contrast of the design's muted text.** Several greys are below WCAG AA's 4.5:1 for small text: the trust-strip names (2.66:1), the mono labels like "ONE PLATFORM" (3.40:1) and the ink-at-55% captions (3.98:1). Built as designed for now. Raising every muted text colour to at least ink at 60% (4.67:1) would fix it with little visible change.
 
 - **Where the hero product card sits on phones.** The mobile layout keeps it after the email form and rating, so signup is reachable without much scrolling. Moving it up to right after the subheading would lead with the product, but pushes the email form about 1,000px down the page, below the first screen on any phone. A sticky nav that keeps Start free visible would soften that.
 - **A scrolling marquee for the "Running on BluthSoft" strip on phones** — one row of names looping instead of three wrapped rows. If it ships, it needs a way to stop it (a pause button, or one pass and then stop; WCAG 2.2.2), the repeated names hidden from screen readers, and a still, swipeable row when the device asks for reduced motion.

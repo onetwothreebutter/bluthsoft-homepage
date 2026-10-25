@@ -1,0 +1,29 @@
+---
+import { home } from "../content/home";
+
+// Customer names as a list. From 1280: one row beside the label, as drawn.
+// Below that the label sits above and the names wrap (the mobile frame).
+// The gap between names grows from the phone frame's 22px to the desktop
+// frame's 52px, so the names stay on one line at 1024, 1280 and 1440.
+
+const { trust } = home;
+---
+
+<div
+  data-section="trust"
+  class="page-gutter border-y border-ink/10 bg-sand py-5 lg:py-5.5"
+>
+  <div class="mx-auto flex max-w-page flex-col gap-3 xl:flex-row xl:items-center xl:gap-7">
+    <p id="trust-label" class="shrink-0 font-mono text-label text-ink/50">
+      {trust.label}
+    </p>
+    <ul
+      aria-labelledby="trust-label"
+      class="flex flex-wrap items-center gap-x-[clamp(22px,10vw-92px,52px)] gap-y-2 font-display text-[15px] font-semibold tracking-[-0.02em] text-ink/42 lg:text-[17px]"
+    >
+      {trust.brands.map((brand) => (
+        <li>{brand}</li>
+      ))}
+    </ul>
+  </div>
+</div>

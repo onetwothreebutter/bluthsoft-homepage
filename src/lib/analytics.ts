@@ -9,6 +9,7 @@
 
 import type { PostHogConfig } from "posthog-js";
 import { readAttribution, type Attribution } from "./attribution";
+import { tabSelectEvent } from "./tabs";
 
 export type Properties = Record<string, unknown>;
 
@@ -171,6 +172,31 @@ export function bindClickTracking(root: Document, analytics: Analytics): void {
     },
     { capture: true },
   );
+}
+
+/**
+ * Fires `Tab Selected` for the tab a visitor settles on, by click or by key
+ * (tabs.ts announces each change of tab), labelled by its text, with the
+ * tab's `data-location`. Arrowing across two tabs on the way to a third is
+ * one choice, not three, so a selection counts once it has stayed `settleMs`.
+ */
+export function bindTabTracking(
+  root: Document,
+  analytics: Analytics,
+  settleMs = 1000,
+): void {
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  root.addEventListener(tabSelectEvent, (event) => {
+    const tab = event.target;
+    if (!(tab instanceof HTMLElement)) return;
+    clearTimeout(pending);
+    pending = setTimeout(() => {
+      analytics.track("Tab Selected", {
+        location: tab.dataset.location,
+        label: tab.textContent?.trim(),
+      });
+    }, settleMs);
+  });
 }
 
 /** Fires `Section Viewed` once per `[data-section]`, when it reaches the middle of the viewport. */
