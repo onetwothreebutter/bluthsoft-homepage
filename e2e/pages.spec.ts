@@ -33,8 +33,9 @@ test.describe("without JavaScript", () => {
 
   test("the hero form signs up and lands on /thanks", async ({ page }) => {
     await page.goto("/");
-    await page.getByLabel(home.hero.form.label).fill("gob@bluth.com");
-    await page.getByRole("button", { name: home.hero.form.submit }).click();
+    const hero = page.locator('form[data-lead-form="hero"]');
+    await hero.getByLabel(home.hero.form.label).fill("gob@bluth.com");
+    await hero.getByRole("button", { name: home.hero.form.submit }).click();
     await expect(page).toHaveURL(/\/thanks$/);
   });
 });

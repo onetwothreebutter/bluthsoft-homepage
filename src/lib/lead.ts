@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { standsValues } from "../content/home";
+import { sellsValues, standsValues } from "../content/home";
 import { utmKeys } from "./attribution";
 
 /**
@@ -42,9 +42,8 @@ export const leadSchema = z
         .enum(standsValues, { error: "Choose how many stands you run." })
         .optional(),
     ),
-    // Answers to "What do you sell?". Free text for now; narrowed to the
-    // option values once the quiz's step 2 exists.
-    sells: z.array(z.string().trim().min(1).max(60)).max(12).optional(),
+    // Answers to "What do you sell?", any number of them.
+    sells: z.array(z.enum(sellsValues)).max(sellsValues.length).optional(),
     name: optionalText(120),
     note: optionalText(2000),
     referrer: optionalText(500),
@@ -78,16 +77,4 @@ export function parseLead(input: unknown): LeadParseResult {
     if (first) errors[field] = first;
   }
   return { ok: false, errors };
-}
-
-/** A form-encoded body as a plain object. `sells` is the only multi-value field. */
-export function formDataToObject(form: FormData): Record<string, unknown> {
-  const object: Record<string, unknown> = {};
-  for (const key of new Set(form.keys())) {
-    object[key] =
-      key === "sells"
-        ? form.getAll(key).map(String)
-        : String(form.get(key) ?? "");
-  }
-  return object;
 }

@@ -1,0 +1,130 @@
+---
+import Honeypot from "../components/Honeypot.astro";
+import SignupCard from "../components/SignupCard.astro";
+import { home } from "../content/home";
+import { demo } from "../content/pages";
+import Page from "../layouts/Page.astro";
+
+// Where "More than 20" stands and every "Book a demo" link go. Not in the
+// design: it reuses the setup questions' card. Posts to /api/lead like the
+// other forms; with JavaScript it confirms in place.
+
+const field =
+  "mt-2 w-full rounded-tile border border-ink/16 bg-white px-4 py-3.5 text-[16px] placeholder:text-ink/45 focus:border-ink focus:outline-none";
+const label = "text-[14px] font-medium";
+const error = "mt-2 text-[13.5px] text-reorder";
+---
+
+<Page title={demo.meta.title} description={demo.meta.description}>
+  <section data-section="demo" class="page-gutter pt-6 pb-16 lg:pt-12 lg:pb-28">
+    <div class="mx-auto max-w-page">
+      <SignupCard
+        eyebrow={demo.eyebrow}
+        heading={demo.heading}
+        lede={demo.lede}
+        checklist={demo.checklist}
+        headingLevel="h1"
+      >
+        <form
+          method="post"
+          action="/api/lead"
+          data-lead-form="demo"
+          data-network-error={demo.errors.network}
+        >
+          <input type="hidden" name="intent" value="demo" />
+          <input type="hidden" name="source" value="demo" />
+          <Honeypot />
+
+          <div data-fields class="flex flex-col gap-5">
+            <div>
+              <label for="demo-name" class={label}>
+                {demo.form.name}
+              </label>
+              <input
+                id="demo-name"
+                name="name"
+                required
+                autocomplete="name"
+                class={field}
+              />
+              <p data-error-for="name" role="alert" class={error} hidden></p>
+            </div>
+            <div>
+              <label for="demo-email" class={label}>
+                {demo.form.email}
+              </label>
+              <input
+                id="demo-email"
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder={demo.form.emailPlaceholder}
+                class={field}
+              />
+              <p data-error-for="email" role="alert" class={error} hidden></p>
+            </div>
+            <div>
+              <label for="demo-stands" class={label}>
+                {demo.form.stands}
+              </label>
+              <select id="demo-stands" name="stands" class={field}>
+                <option value="">{demo.form.standsPlaceholder}</option>
+                {home.getStarted.steps.stands.options.map((option) => (
+                  <option value={option.value}>{option.label}</option>
+                ))}
+              </select>
+              <p data-error-for="stands" role="alert" class={error} hidden></p>
+            </div>
+            <div>
+              <label for="demo-note" class={label}>
+                {demo.form.note}
+                <span class="ms-1 font-normal text-ink/55">
+                  ({demo.form.optional})
+                </span>
+              </label>
+              <textarea
+                id="demo-note"
+                name="note"
+                rows="3"
+                class={field}
+              ></textarea>
+            </div>
+            <p data-error-for="form" role="alert" class={error} hidden></p>
+            <button
+              type="submit"
+              class="self-start rounded-button border border-ink bg-banana px-5.5 py-3.25 text-[15px] font-semibold shadow-press transition active:translate-y-[3px] active:shadow-none disabled:opacity-60"
+            >
+              {demo.form.submit}
+            </button>
+          </div>
+
+          <div
+            data-success
+            hidden
+            tabindex="-1"
+            class="py-6 focus:outline-none"
+          >
+            <h2 class="font-display text-[24px] font-semibold tracking-[-0.025em]">
+              {demo.success.heading}
+            </h2>
+            <p class="mt-2 text-[16px] leading-[1.55] text-ink/72">
+              {demo.success.body}
+            </p>
+          </div>
+        </form>
+      </SignupCard>
+    </div>
+  </section>
+</Page>
+
+<script>
+  import { analytics, handoff } from "../lib/analytics-client";
+  import { bindSignup } from "../lib/signup";
+
+  // "More than 20" in the setup questions carries the answer here.
+  const stands = document.querySelector<HTMLSelectElement>("#demo-stands");
+  if (stands && handoff.answers.stands) stands.value = handoff.answers.stands;
+
+  bindSignup(document, analytics);
+</script>

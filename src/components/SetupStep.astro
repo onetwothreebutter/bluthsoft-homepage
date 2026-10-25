@@ -1,0 +1,33 @@
+---
+// One of the setup questions: the step counter, its name, the progress bar,
+// then the question itself (the slot). signup.ts rewrites the counter and the
+// bar when the number of steps changes.
+interface Props {
+  step: "stands" | "sells" | "email";
+  /** The counter as rendered without JavaScript ("STEP 1 OF 3"). */
+  counter: string;
+  name: string;
+  progress: number;
+}
+
+const { step, counter, name, progress } = Astro.props;
+---
+
+<div data-step={step}>
+  <div class="flex items-center justify-between">
+    <p data-step-of class="font-mono text-label text-ink/50">
+      {counter}
+    </p>
+    <p class="text-[13px] text-ink/55">{name}</p>
+  </div>
+  <div class="mt-3 h-1 overflow-hidden rounded-full bg-ink/10">
+    <div
+      data-progress
+      class="h-full bg-ink transition-[width]"
+      style={`width: ${progress * 100}%`}
+    ></div>
+  </div>
+  <div class="mt-7">
+    <slot />
+  </div>
+</div>

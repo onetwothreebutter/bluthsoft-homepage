@@ -13,7 +13,8 @@ import Honeypot from "./Honeypot.astro";
  * stays in the first screen and the card follows it.
  *
  * The email form posts straight to the lead endpoint, so it works without
- * JavaScript; src/lib/lead-form.ts adds the analytics ID and campaign tags.
+ * JavaScript. With it, src/lib/signup.ts sends it in place, then hands the
+ * email to the setup questions and scrolls to them.
  */
 
 const { hero } = home;
@@ -34,34 +35,51 @@ const { hero } = home;
 
       <p class="max-w-117.5 text-lede text-ink/72">{hero.lede}</p>
 
-      <form
-        method="post"
-        action="/api/lead"
-        data-lead-form="hero"
-        class="relative mt-8.5 flex w-full max-w-120 items-center gap-2.5 rounded-panel border border-ink/18 bg-white p-2 shadow-field focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink"
-      >
-        <label for="hero-email" class="sr-only">
-          {hero.form.label}
-        </label>
-        <input
-          id="hero-email"
-          type="email"
-          name="email"
-          required
-          autocomplete="email"
-          placeholder={hero.form.placeholder}
-          class="min-w-0 flex-1 bg-transparent p-3 text-[16px] placeholder:text-ink/45 focus:outline-none"
-        />
-        <input type="hidden" name="intent" value="signup" />
-        <input type="hidden" name="source" value="hero" />
-        <Honeypot />
-        <button
-          type="submit"
-          class="shrink-0 rounded-button border border-ink bg-banana px-5 py-3.25 text-[15.5px] font-semibold shadow-press transition active:translate-y-[3px] active:shadow-none"
+      <div class="mt-8.5 w-full max-w-120">
+        <form
+          method="post"
+          action="/api/lead"
+          data-lead-form="hero"
+          data-network-error={home.getStarted.errors.network}
         >
-          {hero.form.submit}
-        </button>
-      </form>
+          <div class="relative flex items-center gap-2.5 rounded-panel border border-ink/18 bg-white p-2 shadow-field focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink">
+            <label for="hero-email" class="sr-only">
+              {hero.form.label}
+            </label>
+            <input
+              id="hero-email"
+              type="email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder={hero.form.placeholder}
+              class="min-w-0 flex-1 bg-transparent p-3 text-[16px] placeholder:text-ink/45 focus:outline-none"
+            />
+            <input type="hidden" name="intent" value="signup" />
+            <input type="hidden" name="source" value="hero" />
+            <Honeypot />
+            <button
+              type="submit"
+              class="shrink-0 rounded-button border border-ink bg-banana px-5 py-3.25 text-[15.5px] font-semibold shadow-press transition active:translate-y-[3px] active:shadow-none disabled:opacity-60"
+            >
+              {hero.form.submit}
+            </button>
+          </div>
+          <p
+            data-error-for="form"
+            role="alert"
+            hidden
+            class="mt-2.5 text-[13.5px] text-reorder"
+          ></p>
+        </form>
+        <!-- Empty until the signup goes through; always present so it's announced. -->
+        <p
+          data-hero-success
+          data-message={home.getStarted.heroSuccess}
+          role="status"
+          class="text-[16px] leading-[1.5] font-medium"
+        ></p>
+      </div>
 
       <div class="flex flex-wrap items-center gap-x-3.5 gap-y-2">
         <p class="text-[13px] text-ink/60">{hero.note}</p>

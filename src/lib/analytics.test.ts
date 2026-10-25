@@ -95,6 +95,27 @@ describe("createAnalytics with a key", () => {
     expect(analytics.anonymousId()).toBe("anon-123");
   });
 
+  it("continues a visit carried over from another page", async () => {
+    const posthog = fakePostHog();
+    createAnalytics({
+      key: "phc_test",
+      url: landing,
+      distinctId: "0192f3a4-5b6c-7d8e-9f01-23456789abcd",
+      load: async () => posthog,
+    });
+    await vi.waitFor(() =>
+      expect(posthog.init).toHaveBeenCalledWith(
+        "phc_test",
+        expect.objectContaining({
+          bootstrap: {
+            distinctID: "0192f3a4-5b6c-7d8e-9f01-23456789abcd",
+            isIdentifiedID: false,
+          },
+        }),
+      ),
+    );
+  });
+
   it("tags every event with the deployment environment", async () => {
     const posthog = fakePostHog();
     createAnalytics({

@@ -41,6 +41,8 @@ export interface AnalyticsOptions {
   referrer?: string;
   /** Deployment environment (production, preview, development), attached to every event so QA traffic on previews can be filtered out. */
   environment?: string;
+  /** An anonymous ID carried over from the previous page (see handoff.ts), to continue that visit instead of starting a new one. */
+  distinctId?: string;
   /** Loads the provider. Defaults to a dynamic import so posthog-js is split out of the page bundle. */
   load?: () => Promise<PostHogClient>;
 }
@@ -116,6 +118,9 @@ export function createAnalytics(options: AnalyticsOptions): Analytics {
         autocapture: false,
         person_profiles: "identified_only",
         session_recording: { maskAllInputs: true },
+        ...(options.distinctId && {
+          bootstrap: { distinctID: options.distinctId, isIdentifiedID: false },
+        }),
       });
       if (options.environment)
         ph.register({ environment: options.environment });
