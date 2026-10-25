@@ -109,7 +109,10 @@
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
-  footer :focus-visible {
+  /* The offset puts the ring on the section's background, and ink on a dark
+     one is invisible (1.45:1 on forest), so dark sections get a cream ring. */
+  footer :focus-visible,
+  .bg-forest :focus-visible {
     outline-color: var(--color-cream);
   }
 
