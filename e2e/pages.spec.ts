@@ -26,6 +26,37 @@ test.describe("on a phone", () => {
     await expect(menu).toBeHidden();
     await expect(page).toHaveURL(/\/#product$/);
   });
+
+  test("the hero card's animation waits until the card is in view", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const card = page.getByRole("img", { name: home.hero.dashboard.summary });
+    const playStates = () =>
+      card.evaluate((element) => [
+        ...new Set(
+          element
+            .getAnimations({ subtree: true })
+            .map((animation) => animation.playState),
+        ),
+      ]);
+
+    await expect(card).toHaveAttribute("data-motion", "waiting");
+    expect(await playStates()).toEqual(["paused"]);
+
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).not.toHaveAttribute("data-motion");
+    expect(await playStates()).not.toContain("paused");
+  });
+});
+
+test("the hero card's animation starts at load on desktop", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("img", { name: home.hero.dashboard.summary }),
+  ).not.toHaveAttribute("data-motion");
 });
 
 test.describe("without JavaScript", () => {
@@ -37,6 +68,13 @@ test.describe("without JavaScript", () => {
     await hero.getByLabel(home.hero.form.label).fill("gob@bluth.com");
     await hero.getByRole("button", { name: home.hero.form.submit }).click();
     await expect(page).toHaveURL(/\/thanks$/);
+  });
+
+  test("the hero card's animation plays on load", async ({ page }) => {
+    await page.goto("/");
+    await expect(
+      page.getByRole("img", { name: home.hero.dashboard.summary }),
+    ).not.toHaveAttribute("data-motion");
   });
 });
 
