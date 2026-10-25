@@ -1,6 +1,7 @@
 @import "@fontsource-variable/bricolage-grotesque/opsz.css";
 @import "@fontsource-variable/schibsted-grotesk/wght.css";
 @import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-600.css";
 @import "tailwindcss";
 
 /*
@@ -57,6 +58,9 @@
   --text-display-sm: clamp(34px, 30.48px + 0.939vw, 44px); /* big stats */
   --text-display-sm--line-height: 1.04;
   --text-display-sm--letter-spacing: -0.032em;
+  --text-quote: clamp(26px, 23.18px + 0.751vw, 34px); /* testimonial */
+  --text-quote--line-height: 1.22;
+  --text-quote--letter-spacing: -0.025em;
   --text-lede: clamp(17px, 16.3px + 0.188vw, 19px);
   --text-lede--line-height: 1.55;
   --text-label: 11px;
@@ -75,6 +79,7 @@
   --shadow-press: 0 3px 0 0 var(--color-ink);
   --shadow-field: 0 2px 0 0 rgb(22 21 15 / 0.06);
   --shadow-float: 0 12px 30px 0 rgb(22 21 15 / 0.1);
+  --shadow-receipt: 0 14px 34px 0 rgb(22 21 15 / 0.08);
   --shadow-card:
     0 28px 60px 0 rgb(22 21 15 / 0.1), 0 8px 18px 0 rgb(22 21 15 / 0.06),
     0 1px 1px 0 rgb(22 21 15 / 0.04);
@@ -104,7 +109,10 @@
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
-  footer :focus-visible {
+  /* The offset puts the ring on the section's background, and ink on a dark
+     one is invisible (1.45:1 on forest), so dark sections get a cream ring. */
+  footer :focus-visible,
+  .bg-forest :focus-visible {
     outline-color: var(--color-cream);
   }
 

@@ -88,3 +88,47 @@ test("the product tabs switch panels by click and by keyboard", async ({
   await page.keyboard.press("Tab");
   await expect(panel(ai.tab)).toBeFocused();
 });
+
+test("every in-page link on the homepage has somewhere to land", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const targets = await page
+    .locator('a[href^="/#"]')
+    .evaluateAll((links) => [
+      ...new Set(links.map((link) => link.getAttribute("href")!.slice(2))),
+    ]);
+  expect(targets.length).toBeGreaterThan(0);
+  for (const id of targets) await expect(page.locator(`#${id}`)).toHaveCount(1);
+});
+
+test("focus rings are cream on the dark sections and ink elsewhere", async ({
+  page,
+}) => {
+  await page.goto("/");
+  // toHaveCSS retries: a link with `transition` fades its outline colour in.
+  const expectRing = async (
+    link: import("@playwright/test").Locator,
+    color: string,
+  ) => {
+    await link.focus();
+    expect(await link.evaluate((el) => el.matches(":focus-visible"))).toBe(
+      true,
+    );
+    await expect(link).toHaveCSS("outline-color", color);
+  };
+  const cream = "rgb(251, 247, 238)";
+  const ink = "rgb(22, 21, 15)";
+
+  await expectRing(
+    page
+      .locator("#automation")
+      .getByRole("link", { name: home.automation.cta.label }),
+    cream,
+  );
+  await expectRing(page.locator("footer a").first(), cream);
+  await expectRing(
+    page.getByRole("link", { name: home.hero.secondary.label }),
+    ink,
+  );
+});
