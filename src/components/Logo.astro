@@ -1,0 +1,45 @@
+---
+/**
+ * The mark (a leaf on a banana-yellow tile) and the wordmark. Drawn in CSS as
+ * in the Figma frames: 30px with an ink border on cream (header), 28px
+ * without a border on ink (footer).
+ */
+interface Props {
+  name: string;
+  tone?: "ink" | "cream";
+}
+
+const { name, tone = "ink" } = Astro.props;
+const onDark = tone === "cream";
+---
+
+<span class="flex items-center gap-2.5">
+  <span
+    class:list={[
+      "relative shrink-0 bg-banana",
+      onDark
+        ? "size-7 rounded-chip"
+        : "size-7.5 rounded-[10px] border border-ink",
+    ]}
+    aria-hidden="true"
+  >
+    <span
+      class:list={[
+        "absolute -rotate-12 bg-ink",
+        onDark
+          ? "top-[6.6px] left-[9.1px] size-3 rounded-tr-[11px] rounded-bl-[11px]"
+          : "top-[5px] left-[7.7px] size-3.25 rounded-tr-[12px] rounded-bl-[12px]",
+      ]}
+    ></span>
+  </span>
+  <span
+    class:list={[
+      "font-display font-bold",
+      onDark
+        ? "text-[19px] tracking-[-0.03em] text-cream"
+        : "text-[20px] tracking-[-0.03em] text-ink",
+    ]}
+  >
+    {name}
+  </span>
+</span>

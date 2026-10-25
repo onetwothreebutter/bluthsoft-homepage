@@ -1,0 +1,14 @@
+---
+import { site } from "../content/site";
+import { honeypotField } from "../lib/lead";
+
+// A field real visitors never see or reach; bots that fill every input fill
+// this one too, and the lead endpoint quietly drops their submission.
+---
+
+<div aria-hidden="true" class="absolute -left-[9999px] size-px overflow-hidden">
+  <label>
+    {site.honeypotLabel}
+    <input type="text" name={honeypotField} tabindex="-1" autocomplete="off" />
+  </label>
+</div>

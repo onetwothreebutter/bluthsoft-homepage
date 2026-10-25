@@ -1,0 +1,43 @@
+---
+import { notFound } from "../content/pages";
+import Page from "../layouts/Page.astro";
+import { trackCta } from "../lib/links";
+
+// Every unbuilt link on the site lands here (a fake-door test: the click that
+// brought the visitor here was recorded as `Link Clicked`), and so does any
+// mistyped URL. The page view carries the requested path.
+---
+
+<Page
+  title={notFound.meta.title}
+  description={notFound.meta.description}
+  noindex
+>
+  <section
+    data-section="not-found"
+    class="page-gutter py-24 text-center lg:py-32"
+  >
+    <div class="mx-auto flex max-w-140 flex-col items-center">
+      <p class="font-mono text-label text-ink/50">{notFound.eyebrow}</p>
+      <h1 class="mt-4 font-display text-display-md font-bold">
+        {notFound.heading}
+      </h1>
+      <p class="mt-5 text-lede text-ink/72">{notFound.body}</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a
+          href={notFound.primary.href}
+          class="rounded-button border border-ink bg-banana px-5 py-3.25 text-[15.5px] font-semibold shadow-press transition active:translate-y-[3px] active:shadow-none"
+          {...trackCta("not-found")}
+        >
+          {notFound.primary.label}
+        </a>
+        <a
+          href={notFound.secondary.href}
+          class="rounded-button border border-ink/35 px-5 py-3.25 text-[15.5px] font-medium transition-colors hover:border-ink"
+        >
+          {notFound.secondary.label}
+        </a>
+      </div>
+    </div>
+  </section>
+</Page>

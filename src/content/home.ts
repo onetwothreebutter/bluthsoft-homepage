@@ -8,28 +8,12 @@
  * designed; see DECISIONS.md.
  */
 
+import { anchors, startFree } from "./navigation";
 import { site } from "./site";
-
-export interface Link {
-  label: string;
-  href: string;
-}
 
 /** Quiz answers for "How many stands do you run?". The values are what the lead endpoint accepts. */
 export const standsValues = ["1", "2-5", "6-20", "20+"] as const;
 export type Stands = (typeof standsValues)[number];
-
-// In-page destinations. Links without a section on this page point at real
-// paths that don't exist yet; they land on the 404 page, which records the
-// click as demand for that page.
-const anchors = {
-  product: "#product",
-  automation: "#automation",
-  customers: "#customers",
-  getStarted: "#get-started",
-} as const;
-
-const startFree: Link = { label: "Start free", href: anchors.getStarted };
 
 export const home = {
   // New copy (not in the design): the document title and meta description.
@@ -39,23 +23,13 @@ export const home = {
       "Inventory, sales, staff, and restocking in one system that watches the stand so you don't have to. Free for one stand. No card.",
   },
 
-  nav: {
-    brand: site.name,
-    links: [
-      { label: "Product", href: anchors.product },
-      { label: "Automation", href: anchors.automation },
-      { label: "Customers", href: anchors.customers },
-      { label: "Pricing", href: "/pricing" },
-    ],
-    signIn: { label: "Sign in", href: "/sign-in" },
-    cta: startFree,
-  },
-
   hero: {
     eyebrow: "Now with Bluth AI forecasting",
     heading: "Run your banana stand without going bananas.",
     lede: "BluthSoft is the operating platform for banana stands. Inventory, sales, staff, and restocking — one system that watches the stand so you don't have to.",
     form: {
+      // New copy: the email field's label, read by screen readers only.
+      label: "Email address",
       placeholder: "you@yourstand.com",
       submit: "Start free",
     },
@@ -67,6 +41,9 @@ export const home = {
       aside: "Live in a day",
     },
     dashboard: {
+      // New copy: what screen readers hear for the whole drawing.
+      summary:
+        "BluthSoft dashboard for the Balboa Island stand at 3:12 PM: $1,284 in sales today, 847 bananas sold, 126 left and below par. Bluth AI predicts frozen bananas run out by 3:40 PM and offers to order 300.",
       title: "Bluth Banana Stand — Balboa Island",
       status: "OPEN · 3:12 PM",
       label: "TODAY AT THE STAND",
@@ -316,46 +293,5 @@ export const home = {
     lede: "Start with one stand, free. Add the rest when you’re ready.",
     primary: startFree,
     secondary: { label: "Book a demo", href: "/demo" },
-  },
-
-  footer: {
-    brand: site.name,
-    tagline:
-      "The operating platform for banana stands. Built in Newport Beach.",
-    columns: [
-      {
-        heading: "PRODUCT",
-        links: [
-          { label: "Inventory", href: anchors.product },
-          { label: "Automation", href: anchors.automation },
-          { label: "Bluth AI", href: anchors.product },
-          { label: "Staff & shifts", href: "/staff" },
-        ],
-      },
-      {
-        heading: "COMPANY",
-        links: [
-          { label: "Customers", href: anchors.customers },
-          { label: "Pricing", href: "/pricing" },
-          { label: "Careers", href: "/careers" },
-          { label: "Contact", href: "/contact" },
-        ],
-      },
-      {
-        heading: "RESOURCES",
-        links: [
-          { label: "Docs", href: "/docs" },
-          { label: "Operator guides", href: "/guides" },
-          { label: "Rule library", href: "/rules" },
-          { label: "Status", href: "/status" },
-        ],
-      },
-    ],
-    copyright: "© 2026 BLUTHSOFT, INC.",
-    legal: [
-      { label: "PRIVACY", href: "/privacy" },
-      { label: "TERMS", href: "/terms" },
-    ],
-    motto: "THERE’S ALWAYS MONEY IN THE BANANA STAND.",
   },
 } as const;

@@ -31,26 +31,33 @@
   /* Type */
   --font-display:
     "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
-  /* Figma pins the optical size at 14 for every size; without this the
-     browser's auto optical sizing renders large headings noticeably thinner. */
-  --font-display--font-variation-settings: "opsz" 14, "wdth" 100;
+  /* Bricolage's optical size follows the font size (the browser default).
+     Figma's code export lists "opsz" 14, but its renders match automatic
+     sizing: measured on the hero H1, opsz 14 sets "Run your banana" about
+     9% wider than the frame and rewraps the phone headline onto 4 lines. */
   --font-sans:
     "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --text-display-xl: 72px;
+  /*
+   * Display sizes are fluid: exactly the mobile frame's size at a 375px
+   * viewport and the desktop frame's at 1440px, on a straight line between.
+   * Each is clamp(375px size, intercept + slope·vw, 1440px size), where
+   * slope = (desktop − mobile) / 1065px.
+   */
+  --text-display-xl: clamp(44px, 34.14px + 2.629vw, 72px); /* hero H1 */
   --text-display-xl--line-height: 0.98;
   --text-display-xl--letter-spacing: -0.035em;
-  --text-display-lg: 64px;
+  --text-display-lg: clamp(36px, 26.14px + 2.629vw, 64px); /* final CTA */
   --text-display-lg--line-height: 1;
   --text-display-lg--letter-spacing: -0.04em;
-  --text-display-md: 52px;
+  --text-display-md: clamp(34px, 27.66px + 1.69vw, 52px); /* section H2s */
   --text-display-md--line-height: 1.02;
   --text-display-md--letter-spacing: -0.032em;
-  --text-display-sm: 44px;
+  --text-display-sm: clamp(34px, 30.48px + 0.939vw, 44px); /* big stats */
   --text-display-sm--line-height: 1.04;
   --text-display-sm--letter-spacing: -0.032em;
-  --text-lede: 19px;
+  --text-lede: clamp(17px, 16.3px + 0.188vw, 19px);
   --text-lede--line-height: 1.55;
   --text-label: 11px;
   --text-label--letter-spacing: 0.09em;
@@ -76,11 +83,34 @@
   --container-page: 1280px;
 }
 
+/* Side padding for every section: 20px at 375 (the mobile frame), 80px at
+   1440 (the desktop frame), fluid between, using the same rule as the type. */
+@utility page-gutter {
+  padding-inline: clamp(20px, 5.634vw - 1.13px, 80px);
+}
+
 @layer base {
   html {
     background-color: var(--color-cream);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    /* The design sets most text at the font's own line height ("auto" in
+       Figma); Tailwind's preflight would make it 1.5. */
+    line-height: normal;
     -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  footer :focus-visible {
+    outline-color: var(--color-cream);
+  }
+
+  /* While the phone menu is open it covers the page; stop the page behind it
+     scrolling. */
+  body:has(#site-menu:popover-open) {
+    overflow: hidden;
   }
 }

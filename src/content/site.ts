@@ -12,4 +12,7 @@ export const site = {
   offer: "Free for one stand. No card.",
   // New copy: not in the design.
   skipLink: "Skip to content",
+  // New copy: the spam trap's label. Hidden from people and screen readers;
+  // only bots that fill every field see it.
+  honeypotLabel: "Leave this empty",
 } as const;
