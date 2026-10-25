@@ -75,7 +75,7 @@ Budget: 6 hours in two sittings.
 | 1       | 2026-10-24 | 2.5 hours | Planning, the phone layout in Figma and its review, the build (scaffold, analytics and lead endpoint, every section, the setup questions, `/demo`), and setting up HubSpot and PostHog |
 | 2       | 2026-10-25 | 2 hours   | Reviewing and merging the build: review fixes (attribution on the way to `/demo`, keyboard tab tracking, focus on the product panels and on forest) and the hero card's load animation |
 
-**Total: 4.5 of 6 hours.** Setting up HubSpot and PostHog is included, although the plan left account setup out of the budget. Sitting 2 is wall-clock time (5:35 to 7:30 AM, rounded up); the animation was built in a second session alongside the reviews, not on top of them. Recording the Loom walkthrough comes after and isn't included.
+**Total: 4.5 of 6 hours.** Setting up HubSpot and PostHog is included, although the plan left account setup out of the budget. Sitting 2 is wall-clock time (5:35 to 7:30 AM, rounded up); the animation was built in a second session alongside the reviews, not on top of them. The budget also covers the Loom walkthrough, recorded after this sitting.
 
 ## What's next
 
